@@ -6,7 +6,9 @@
 >
   <div class="junto-page-hero-inner junto-shell">
     <div class="junto-page-heading">
-      <span class="junto-eyebrow" th:text="|${#strings.toUpperCase(_templateId)} / JUNTO ARCHIVE|"
+      <span
+        class="junto-eyebrow"
+        th:text="|${#strings.toUpperCase(id != null ? id : (_templateId != null ? _templateId : 'page'))} / JUNTO ARCHIVE|"
         >PAGE / JUNTO ARCHIVE</span
       >
       <div class="junto-page-title" th:if="${headerTitle != null}"><th:block th:replace="${headerTitle}" /></div>
@@ -16,7 +18,10 @@
         th:text="${#strings.isEmpty(site.subtitle) ? '作品、项目、文章与视觉实验组成的个人数字档案。' : site.subtitle}"
       ></p>
       <div class="junto-page-meta">
-        <span>HALO 2.x</span><span>DEEP BLUE</span><span th:text="${#strings.toUpperCase(_templateId)}">ARCHIVE</span>
+        <span>HALO 2.x</span><span>DEEP BLUE</span
+        ><span th:text="${#strings.toUpperCase(id != null ? id : (_templateId != null ? _templateId : 'archive'))}"
+          >ARCHIVE</span
+        >
       </div>
     </div>
   </div>
