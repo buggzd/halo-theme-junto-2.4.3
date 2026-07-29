@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{layout :: layout(_title = ~{::title}, _header = ~{::header}, _content = ~{::content})}"
+>
+  <th:block th:fragment="header">
+    <section class="junto-home-hero">
+      <div class="junto-home-inner">
+        <span class="junto-home-label junto-eyebrow">PERSONAL ARCHIVE — HALO / 2026</span>
+        <h1 class="junto-hero-heading"><span th:text="${site.title}">JUNTO</span><span class="stroke" data-text="STUDIO">STUDIO</span></h1>
+        <div class="junto-home-bottom">
+          <p th:text="${#strings.isEmpty(site.subtitle) ? '绘画、代码、游戏体验与零散思考。这里是一间持续变化的数字工作室。' : site.subtitle}"></p>
+          <span class="junto-eyebrow">SCROLL / LET THE LAYOUT BREATHE ↓</span>
+        </div>
+      </div>
+    </section>
+    <div class="junto-signal"><div class="junto-signal-track"><span>ILLUSTRATION × SHADER × GAME × ESSAY × OPEN SOURCE — </span><span>ILLUSTRATION × SHADER × GAME × ESSAY × OPEN SOURCE — </span></div></div>
+  </th:block>
+
+  <th:block th:fragment="content">
+    <div id="primary" class="junto-index" th:with="postItems=${posts.items}">
+      <div class="junto-index-head">
+        <div><span class="junto-eyebrow">01 / NOTES & FIELD LOGS</span><h1>Latest<br />Signals.</h1></div>
+        <p>文章不再被压进同一种卡片。标题、摘要和日期以编辑索引的方式组织，让内容本身成为页面的主要视觉。</p>
+      </div>
+      <div id="main" class="junto-post-list">
+        <th:block th:if="${posts.totalPages gt 0}">
+          <!--/* Start the Loop */-->
+          <th:block th:each="post, postStat : ${postItems}">
+            <th:block th:replace="~{macro/content :: content(${post}, ${postStat.index + 1})}" />
+          </th:block>
+        </th:block>
+        <th:block th:unless="${posts.total gt 0}">
+          <th:block th:replace="~{macro/content-none}" />
+        </th:block>
+      </div>
+      <th:block th:replace="~{module/list-pagination :: pagination(${posts})}"></th:block>
+    </div>
+  </th:block>
+</html>

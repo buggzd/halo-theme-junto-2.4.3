@@ -1,0 +1,28 @@
+<article th:fragment="content(post, index)" itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" th:href="@{${post.status.permalink}}" />
+
+  <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="image" th:content="${post.owner.avatar}" />
+    <meta itemprop="name" th:content="${post.owner.displayName}" />
+  </span>
+
+  <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" th:content="${site.title}" />
+    <meta itemprop="description" th:content="${site.subtitle}" />
+  </span>
+
+  <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="name" th:content="${post.spec.title}" />
+    <meta itemprop="description" th:content="${post.status.excerpt}" />
+  </span>
+
+  <a class="junto-post-row" data-pjax th:href="@{${post.status.permalink}}" th:aria-label="${post.spec.title}">
+    <span class="junto-post-number" th:text="${index lt 10 ? '0' + index : index}">01</span>
+    <h2 th:text="${post.spec.title}"></h2>
+    <p th:text="${post.status.excerpt}"></p>
+    <span class="junto-post-date">
+      <time th:text="${#dates.format(post.spec.publishTime, 'yyyy.MM')}" th:datetime="${post.spec.publishTime}"></time><br />
+      <span th:if="${post.spec.pinned}">PINNED / </span><span th:text="|${post.stats.visit} VIEWS|">0 VIEWS</span>
+    </span>
+  </a>
+</article>

@@ -1,0 +1,17 @@
+<!--/* 页脚设置 */-->
+<th:block th:fragment="footer">
+  <div class="junto-shell">
+    <h2 class="junto-footer-title">Keep<br /><span>Making.</span></h2>
+    <div class="junto-footer-bottom">
+      <div class="junto-footer-links">
+        <a th:href="@{/archives}" data-pjax>Archive</a>
+        <a th:href="@{/links}" data-pjax>Friends</a>
+        <a href="/rss.xml">RSS</a>
+        <a href="https://github.com/buggzd" target="_blank" rel="noreferrer">GitHub ↗</a>
+        <a href="https://halo.run" target="_blank" rel="noreferrer">Powered by Halo ↗</a>
+      </div>
+      <small class="junto-mono">© <th:block th:text="${#dates.format(new java.util.Date().getTime(), 'yyyy')}" /> <th:block th:text="${site.title}" /> / JUNTO THEME</small>
+    </div>
+    <halo:footer />
+  </div>
+</th:block>

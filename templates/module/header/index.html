@@ -1,0 +1,13 @@
+<th:block th:fragment="header">
+  <div class="junto-header">
+    <a class="junto-brand" data-pjax th:href="@{/}" th:aria-label="${site.title}">
+      <span class="junto-brand-mark"></span>
+      <span th:text="|${site.title} / BLUE ARCHIVE|">JUNTO / BLUE ARCHIVE</span>
+    </a>
+    <th:block th:replace="~{module/header/menu}" />
+    <div class="junto-tools">
+      <button th:if="${theme.config.general.top_search and pluginFinder.available('PluginSearchWidget')}" class="junto-search js-togger-search" type="button">SEARCH ⌘K</button>
+      <button class="junto-menu-toggle" type="button" data-junto-menu>INDEX +</button>
+    </div>
+  </div>
+</th:block>
