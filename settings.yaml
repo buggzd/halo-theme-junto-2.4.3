@@ -1085,6 +1085,115 @@ spec:
           label: 工作室副标
           value: CG ARTIST × DEVELOPER
         - $formkit: text
+          name: hero_kicker
+          label: 首页首屏眉题
+          value: PERSONAL ARCHIVE — HALO / 2026
+        - $formkit: text
+          name: hero_outline_text
+          label: 首页描边大字
+          value: STUDIO
+        - $formkit: text
+          name: hero_scroll_hint
+          label: 首页滚动提示
+          value: SCROLL / LET THE LAYOUT BREATHE ↓
+        - $formkit: text
+          name: signal_text
+          label: 首页滚动文字
+          value: ILLUSTRATION × SHADER × GAME × ESSAY × OPEN SOURCE
+          help: 文字会自动重复并循环滚动，无需手动添加分隔符。
+        - $formkit: text
+          name: routes_kicker
+          label: 导航区眉题
+          value: 00 / THREE ENTRANCES
+        - $formkit: text
+          name: routes_title
+          label: 导航区标题
+          value: No Single Discipline.
+        - $formkit: textarea
+          name: routes_description
+          label: 导航区说明
+          value: 从作品、项目与文字三个方向浏览这间数字工作室。
+        - $formkit: text
+          name: route_works_label
+          label: 作品入口名称
+          value: Works
+        - $formkit: text
+          name: route_works_description
+          label: 作品入口说明
+          value: 绘画、同人、像素与过程档案
+        - $formkit: text
+          name: route_projects_label
+          label: 项目入口名称
+          value: Projects
+        - $formkit: text
+          name: route_projects_description
+          label: 项目入口说明
+          value: 开源工具、Shader 与创作案例
+        - $formkit: text
+          name: route_notes_label
+          label: 文章入口名称
+          value: Notes
+        - $formkit: text
+          name: route_notes_description
+          label: 文章入口说明
+          value: 游戏、技术、读书与个人写作
+        - $formkit: text
+          name: works_kicker
+          label: 作品区眉题
+          value: 01 / SELECTED WORKS
+        - $formkit: text
+          name: works_title
+          label: 作品区标题
+          value: Loose Frames.
+        - $formkit: textarea
+          name: works_description
+          label: 作品区说明
+          value: 最近整理的视觉作品、插画与创作过程。
+        - $formkit: text
+          name: works_item_label
+          label: 作品序号后缀
+          value: VISUAL
+        - $formkit: text
+          name: works_empty_kicker
+          label: 作品空状态眉题
+          value: VISUAL ARCHIVE / COMING SOON
+        - $formkit: text
+          name: works_empty_title
+          label: 作品空状态标题
+          value: Visual archive awaiting signal.
+        - $formkit: textarea
+          name: works_empty_description
+          label: 作品空状态说明
+          value: 这里还没有公开的视觉作品，稍后再来看看吧。
+        - $formkit: text
+          name: works_more_text
+          label: 查看全部作品文字
+          value: VIEW COMPLETE VISUAL ARCHIVE →
+        - $formkit: text
+          name: projects_kicker
+          label: 项目区眉题
+          value: 02 / BUILDS & EXPERIMENTS
+        - $formkit: text
+          name: projects_title
+          label: 项目区标题
+          value: Things I Build.
+        - $formkit: textarea
+          name: projects_description
+          label: 项目区说明
+          value: 持续维护的工具、视觉实验与个人项目。
+        - $formkit: text
+          name: posts_kicker
+          label: 文章区眉题
+          value: 03 / NOTES & FIELD LOGS
+        - $formkit: text
+          name: posts_title
+          label: 文章区标题
+          value: Latest Signals.
+        - $formkit: textarea
+          name: posts_description
+          label: 文章区说明
+          value: 关于创作、技术、游戏与日常观察的最新记录。
+        - $formkit: text
           name: github_username
           label: GitHub 用户名
           value: buggzd

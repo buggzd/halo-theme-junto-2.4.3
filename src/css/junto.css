@@ -80,6 +80,8 @@ body.junto-theme::before {
 .junto-theme .site-header {
   position: fixed;
   inset: 0 0 auto;
+  width: 100%;
+  max-width: none;
   z-index: 1000;
   height: 66px;
   background: rgba(245, 248, 251, 0.88);
@@ -95,6 +97,7 @@ body.junto-theme::before {
   height: 100%;
   margin: auto;
   padding: 0;
+  background: transparent;
 }
 .junto-header {
   height: 100%;
@@ -309,7 +312,7 @@ body.junto-theme::before {
 .junto-signal-track span {
   white-space: nowrap;
   padding: 0.18em 0.35em 0.24em 0;
-  font-size: clamp(2.1rem, 5vw, 5.6rem);
+  font-size: clamp(1.8rem, 3.6vw, 4.2rem);
   font-weight: 1000;
   letter-spacing: -0.06em;
   line-height: 0.92;
@@ -512,8 +515,8 @@ body.junto-theme::before {
 }
 .junto-home-project-layout {
   display: grid;
-  grid-template-columns: 0.7fr 1.3fr;
-  gap: 10vw;
+  grid-template-columns: minmax(280px, 0.58fr) minmax(0, 1.42fr);
+  gap: clamp(48px, 7vw, 120px);
   align-items: start;
 }
 .junto-home-project-copy {
@@ -537,7 +540,7 @@ body.junto-theme::before {
   min-height: 190px;
   padding: 30px 0 44px;
   display: grid;
-  grid-template-columns: 55px 1fr auto;
+  grid-template-columns: 55px minmax(0, 1fr) minmax(150px, auto);
   gap: 20px;
   align-items: end;
   border-top: 1px solid var(--junto-ink);
@@ -548,9 +551,13 @@ body.junto-theme::before {
 }
 .junto-home-project-list h3 {
   margin: 0;
-  font-size: clamp(2.7rem, 5.5vw, 6.5rem);
+  font-size: clamp(2.7rem, 4.6vw, 6rem);
   line-height: 0.78;
   letter-spacing: -0.065em;
+  overflow-wrap: normal !important;
+  word-break: keep-all !important;
+  hyphens: none;
+  text-wrap: balance;
   transition: 0.4s var(--junto-ease);
 }
 .junto-home-project-list p {
@@ -563,6 +570,9 @@ body.junto-theme::before {
 .junto-home-project-list small {
   font: 750 10px/1.5 ui-monospace, monospace;
   letter-spacing: 0.1em;
+}
+.junto-home-project-list > a > small {
+  white-space: nowrap;
 }
 .junto-home-project-list > a:hover h3 {
   color: var(--junto-blue);
@@ -2125,7 +2135,7 @@ body.junto-theme::before {
   .junto-home-stamp {
     display: none;
   }
-  .junto-hero-heading {
+  .junto-theme .junto-hero-heading {
     font-size: 25vw;
   }
   .junto-hero-heading .stroke {
@@ -2138,9 +2148,12 @@ body.junto-theme::before {
   .junto-home-routes {
     min-height: 150svh;
   }
-  .junto-home-route-copy h2,
-  .junto-home-works-head h2,
-  .junto-home-project-copy h2 {
+  .junto-theme .junto-home-route-copy h2,
+  .junto-theme .junto-home-works-head h2,
+  .junto-theme .junto-home-project-copy h2 {
+    font-size: 18vw;
+  }
+  .junto-theme .junto-index-head h1 {
     font-size: 18vw;
   }
   .junto-home-route-orbit {
@@ -2226,7 +2239,7 @@ body.junto-theme::before {
     min-height: 72svh;
     padding-top: 90px;
   }
-  .junto-page-title h1 {
+  .junto-theme .junto-page-title h1 {
     font-size: 21vw;
     -webkit-text-stroke-width: 1px;
   }
