@@ -16,13 +16,18 @@
     </div>
   </th:block>
 
-  <th:block th:fragment="headerTitle">
-    <h1 data-i18n="page.tags.item.title" th:i18n-options="|{title: '${tag.spec.displayName}'}|"></h1>
-  </th:block>
+  <th:block th:fragment="headerTitle"><h1 th:text="${tag.spec.displayName}"></h1></th:block>
 
   <th:block th:fragment="content">
-    <div id="primary" th:with="postItems=${posts.items}">
-      <main id="main" class="site-main" role="main">
+    <div id="primary" class="junto-route-index junto-shell" th:with="postItems=${posts.items}">
+      <div class="junto-section-heading">
+        <div>
+          <span class="junto-eyebrow">TAG / NOTES</span>
+          <h2>Tagged<br />Signals.</h2>
+        </div>
+        <p>汇集带有这个标签的文章、记录与实验。</p>
+      </div>
+      <main id="main" class="junto-post-list" role="main">
         <th:block th:if="${posts.totalPages gt 0}">
           <th:block th:each="post, postStat : ${postItems}">
             <th:block th:replace="~{macro/content :: content(${post}, ${postStat.index + 1})}" />

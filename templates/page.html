@@ -9,20 +9,24 @@
 
   <th:block th:fragment="header">
     <div class="single-page-header">
-      <th:block th:replace="~{macro/page-header :: page-header(extension = ${singlePage}, frontCover = ${singlePage.spec.cover}, headerTitle = ~{::headerTitle})}" />
+      <th:block
+        th:replace="~{macro/page-header :: page-header(extension = ${singlePage}, frontCover = ${singlePage.spec.cover}, headerTitle = ~{::headerTitle})}"
+      />
     </div>
   </th:block>
 
   <th:block th:fragment="headerTitle">
     <h1 th:text="${singlePage.spec.title}"></h1>
   </th:block>
-  
+
   <th:block th:fragment="content">
-    <div id="primary" class="content-area">
+    <div id="primary" class="content-area junto-page-content junto-shell">
       <th:block th:replace="~{macro/content-page :: content-page(${singlePage})}" />
     </div>
-    
+
     <!--/* 评论组件 */-->
-    <th:block th:replace="~{module/comment :: comment(group = 'content.halo.run', kind = 'SinglePage', name = ${singlePage.metadata.name})}" />
+    <th:block
+      th:replace="~{module/comment :: comment(group = 'content.halo.run', kind = 'SinglePage', name = ${singlePage.metadata.name})}"
+    />
   </th:block>
 </html>

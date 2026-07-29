@@ -7,20 +7,120 @@
     <section class="junto-home-hero">
       <div class="junto-home-inner">
         <span class="junto-home-label junto-eyebrow">PERSONAL ARCHIVE — HALO / 2026</span>
-        <h1 class="junto-hero-heading"><span th:text="${site.title}">JUNTO</span><span class="stroke" data-text="STUDIO">STUDIO</span></h1>
+        <div class="junto-home-stamp" th:text="${theme.config.junto.studio_label}">CG ARTIST × DEVELOPER</div>
+        <h1 class="junto-hero-heading">
+          <span th:text="${site.title}">JUNTO</span><span class="stroke" data-text="STUDIO">STUDIO</span>
+        </h1>
         <div class="junto-home-bottom">
-          <p th:text="${#strings.isEmpty(site.subtitle) ? '绘画、代码、游戏体验与零散思考。这里是一间持续变化的数字工作室。' : site.subtitle}"></p>
+          <p
+            th:text="${#strings.isEmpty(site.subtitle) ? '绘画、代码、游戏体验与零散思考。这里是一间持续变化的数字工作室。' : site.subtitle}"
+          ></p>
           <span class="junto-eyebrow">SCROLL / LET THE LAYOUT BREATHE ↓</span>
         </div>
       </div>
     </section>
-    <div class="junto-signal"><div class="junto-signal-track"><span>ILLUSTRATION × SHADER × GAME × ESSAY × OPEN SOURCE — </span><span>ILLUSTRATION × SHADER × GAME × ESSAY × OPEN SOURCE — </span></div></div>
+    <div class="junto-signal">
+      <div class="junto-signal-track">
+        <span>ILLUSTRATION × SHADER × GAME × ESSAY × OPEN SOURCE — </span
+        ><span>ILLUSTRATION × SHADER × GAME × ESSAY × OPEN SOURCE — </span>
+      </div>
+    </div>
   </th:block>
 
   <th:block th:fragment="content">
+    <section class="junto-home-routes">
+      <div class="junto-home-route-copy junto-shell">
+        <div>
+          <span class="junto-eyebrow">00 / THREE ENTRANCES</span>
+          <h2>No Single<br />Discipline.</h2>
+        </div>
+        <p>绘画、代码和写作不是三个孤立栏目，而是同一间数字工作室里的不同工作台。</p>
+      </div>
+      <div class="junto-home-route-orbit junto-shell">
+        <a data-pjax th:href="@{/photos}">Works<small>绘画、同人、像素与过程档案</small></a>
+        <a data-pjax th:href="@{/categories}">Projects<small>开源工具、Shader 与创作案例</small></a>
+        <a data-pjax th:href="@{/archives}">Notes<small>游戏、技术、读书与个人写作</small></a>
+      </div>
+    </section>
+
+    <section class="junto-home-works">
+      <div class="junto-home-works-head junto-shell">
+        <div>
+          <span class="junto-eyebrow">01 / SELECTED WORKS</span>
+          <h2>Loose<br />Frames.</h2>
+        </div>
+        <p>真实作品来自 Halo 图库插件。不同尺寸和偏移构成观看节奏，点击即可进入完整图库。</p>
+      </div>
+      <div
+        class="junto-home-work-grid junto-shell fancybox-content"
+        th:if="${pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll())}"
+      >
+        <a
+          class="junto-home-work"
+          th:each="photo, stat : ${photoFinder.listAll()}"
+          th:if="${stat.index lt 6}"
+          th:href="${photo.spec.url}"
+          th:title="${photo.spec.displayName}"
+        >
+          <img
+            class="lazyload"
+            th:src="${#strings.isEmpty(photo.spec.cover) ? #theme.assets('/images/load/load.gif') : photo.spec.cover}"
+            th:data-src="${photo.spec.url}"
+            th:alt="${photo.spec.displayName}"
+          />
+          <span
+            ><strong th:text="${photo.spec.displayName}">Untitled</strong
+            ><small th:text="|0${stat.index + 1} / VISUAL|">01 / VISUAL</small></span
+          >
+        </a>
+      </div>
+      <div
+        class="junto-home-works-empty junto-shell"
+        th:unless="${pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll())}"
+      >
+        <span class="junto-eyebrow">PLUGIN REQUIRED / PHOTOS</span>
+        <h3>Visual archive<br />awaiting signal.</h3>
+        <p>启用 Halo 图库插件后，精选作品将自动出现在这里。</p>
+      </div>
+      <a
+        class="junto-home-more junto-shell"
+        data-pjax
+        th:if="${pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll())}"
+        th:href="@{/photos}"
+        >VIEW COMPLETE VISUAL ARCHIVE →</a
+      >
+    </section>
+
+    <section class="junto-home-projects">
+      <div class="junto-home-project-layout junto-shell">
+        <div class="junto-home-project-copy">
+          <span class="junto-eyebrow">02 / BUILDS & EXPERIMENTS</span>
+          <h2>Things<br />I Build.</h2>
+          <p>项目条目由主题设置维护，可以指向 GitHub 仓库，也可以链接到使用“项目案例”模板制作的 Halo 单页。</p>
+        </div>
+        <div class="junto-home-project-list">
+          <a
+            th:each="project, stat : ${theme.config.junto.projects}"
+            th:href="${project.url}"
+            th:target="${#strings.startsWith(project.url, 'http') ? '_blank' : '_self'}"
+            rel="noreferrer"
+            ><span th:text="|0${stat.index + 1}|">01</span>
+            <div>
+              <h3 th:text="${project.title}">Project</h3>
+              <p th:text="${project.description}"></p>
+            </div>
+            <small th:text="|${project.tech} →|">DETAIL →</small></a
+          >
+        </div>
+      </div>
+    </section>
+
     <div id="primary" class="junto-index" th:with="postItems=${posts.items}">
       <div class="junto-index-head">
-        <div><span class="junto-eyebrow">01 / NOTES & FIELD LOGS</span><h1>Latest<br />Signals.</h1></div>
+        <div>
+          <span class="junto-eyebrow">01 / NOTES & FIELD LOGS</span>
+          <h1>Latest<br />Signals.</h1>
+        </div>
         <p>文章不再被压进同一种卡片。标题、摘要和日期以编辑索引的方式组织，让内容本身成为页面的主要视觉。</p>
       </div>
       <div id="main" class="junto-post-list">

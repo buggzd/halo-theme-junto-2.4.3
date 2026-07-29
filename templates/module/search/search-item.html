@@ -1,25 +1,10 @@
-<article th:fragment="item(document)" class="document document-list" itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" th:href="@{${document.permalink}}" />
-
-  <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" th:content="${site.title}" />
-    <meta itemprop="description" th:content="${site.subtitle}" />
-  </span>
-
-  <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-    <meta itemprop="name" th:content="${document.title}" />
-    <meta itemprop="description" th:content="${document.description}" />
-  </span>
-
-  <th:block th:switch="${document.type}">
-    <th:block th:case="post.content.halo.run">
-      <th:block th:replace="~{macro/content :: content(${postFinder.getByName(document.metadataName)}, 1)}" />
-    </th:block>
-    <th:block th:case="singlepage.content.halo.run">
-      <th:block th:replace="~{macro/content :: content(${postFinder.getByName(document.metadataName)}, 1)}" />
-    </th:block>
-    <th:block th:case="moment.moment.halo.run">
-      <th:block th:replace="~{module/search/search-moment :: content(${document})}" />
-    </th:block>
-  </th:block>
+<article th:fragment="item(document)" class="junto-search-result" itemscope itemtype="http://schema.org/Article">
+  <a data-pjax th:href="@{${document.permalink}}">
+    <span class="junto-eyebrow" th:text="${#strings.toUpperCase(document.type)}">RESULT</span>
+    <div>
+      <h2 th:text="${document.title}">Result title</h2>
+      <p th:text="${document.description}"></p>
+    </div>
+    <small>OPEN SIGNAL →</small>
+  </a>
 </article>

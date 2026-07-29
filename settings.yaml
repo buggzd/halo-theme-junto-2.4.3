@@ -1077,3 +1077,78 @@ spec:
           label: 备案模式
           value: false
           help: 备案模式，开启之后将隐藏所有留言、评论功能
+    - group: junto
+      label: Junto 专属
+      formSchema:
+        - $formkit: text
+          name: studio_label
+          label: 工作室副标
+          value: CG ARTIST × DEVELOPER
+        - $formkit: text
+          name: github_username
+          label: GitHub 用户名
+          value: buggzd
+          help: 项目页将读取该用户的公开仓库
+        - $formkit: url
+          name: github_url
+          label: GitHub 链接
+          value: https://github.com/buggzd
+        - $formkit: url
+          name: pixiv_url
+          label: Pixiv 链接
+          value: https://www.pixiv.net/users/17109509
+        - $formkit: checkbox
+          name: intro_animation
+          label: 首次访问开场动画
+          value: true
+        - $formkit: checkbox
+          name: custom_cursor
+          label: 桌面端实验光标
+          value: true
+        - $formkit: repeater
+          name: projects
+          label: 精选项目
+          value:
+            - title: Perfect Pixel
+              description: 清理与量化 AI 像素画的工具实验。
+              tech: TYPESCRIPT / ACTIVE
+              url: https://github.com/buggzd/perfectPixel_enhanced
+              visual: pixel
+            - title: One Last Kiss
+              description: Unity 风格化角色材质与泛光研究。
+              tech: SHADERLAB / VISUAL STUDY
+              url: https://github.com/buggzd/OneLastKissShader
+              visual: shader
+            - title: Unity Laser Coat
+              description: 各向异性镭射涂层实时渲染实验。
+              tech: UNITY / ANISOTROPIC
+              url: https://github.com/buggzd/unityLaserCoat
+              visual: coat
+          children:
+            - $formkit: text
+              name: title
+              label: 项目名称
+              validation: required
+            - $formkit: textarea
+              name: description
+              label: 项目简介
+            - $formkit: text
+              name: tech
+              label: 技术栈 / 状态
+            - $formkit: url
+              name: url
+              label: 项目链接
+              validation: required
+            - $formkit: select
+              name: visual
+              label: 视觉材质
+              value: pixel
+              options:
+                - value: pixel
+                  label: 像素深蓝
+                - value: shader
+                  label: Shader 渐变
+                - value: coat
+                  label: 镭射涂层
+                - value: mod
+                  label: 模组条纹

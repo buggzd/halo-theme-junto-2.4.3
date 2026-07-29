@@ -10,17 +10,24 @@
 
   <th:block th:fragment="header">
     <div class="author-header">
-      <th:block th:replace="~{macro/page-header :: page-header(extension = ${author}, frontCover = ${#annotations.getOrDefault(author, 'cover', '')}, headerTitle = ~{::headerTitle})}" />
+      <th:block
+        th:replace="~{macro/page-header :: page-header(extension = ${author}, frontCover = ${#annotations.getOrDefault(author, 'cover', '')}, headerTitle = ~{::headerTitle})}"
+      />
     </div>
   </th:block>
 
-  <th:block th:fragment="headerTitle">
-    <h1 data-i18n="page.author.title" th:i18n-options="|{ authorName: '${author.spec.displayName}' }|"></h1>
-  </th:block>
+  <th:block th:fragment="headerTitle"><h1 th:text="${author.spec.displayName}"></h1></th:block>
 
   <th:block th:fragment="content">
-    <div id="primary" th:with="postItems=${posts.items}">
-      <main id="main" class="site-main" role="main">
+    <div id="primary" class="junto-route-index junto-shell" th:with="postItems=${posts.items}">
+      <div class="junto-section-heading">
+        <div>
+          <span class="junto-eyebrow">AUTHOR / NOTES</span>
+          <h2>Written<br />Signals.</h2>
+        </div>
+        <p>该作者发布的全部文章与记录。</p>
+      </div>
+      <main id="main" class="junto-post-list" role="main">
         <th:block th:if="${posts.totalPages gt 0}">
           <th:block th:each="post, postStat : ${postItems}">
             <th:block th:replace="~{macro/content :: content(${post}, ${postStat.index + 1})}" />

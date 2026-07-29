@@ -10,19 +10,26 @@
 
   <th:block th:fragment="header">
     <div class="category-header">
-      <th:block th:replace="~{macro/page-header :: page-header(extension = ${category}, frontCover = ${category.spec.cover}, headerTitle = ~{::headerTitle})}" />
+      <th:block
+        th:replace="~{macro/page-header :: page-header(extension = ${category}, frontCover = ${category.spec.cover}, headerTitle = ~{::headerTitle})}"
+      />
     </div>
   </th:block>
 
-  <th:block th:fragment="headerTitle">
-    <!--/* 具有背景图的情况下，分类和标签的标题样式问题 */-->
-    <h1 class="cat-title" data-i18n="page.categories.item_title" th:i18n-options="|{ title: '${category.spec.displayName}' }|"></h1>
-    <span class="cat-des" th:text="${category.spec.description}"></span>
-  </th:block>
+  <th:block th:fragment="headerTitle"><h1 th:text="${category.spec.displayName}"></h1></th:block>
 
   <th:block th:fragment="content">
-    <div id="primary" th:with="postItems=${posts.items}">
-      <main id="main" class="site-main" role="main">
+    <div id="primary" class="junto-route-index junto-shell" th:with="postItems=${posts.items}">
+      <div class="junto-section-heading">
+        <div>
+          <span class="junto-eyebrow">CATEGORY / NOTES</span>
+          <h2>Filed<br />Writing.</h2>
+        </div>
+        <p
+          th:text="${#strings.isEmpty(category.spec.description) ? '这个分类下的全部文章。' : category.spec.description}"
+        ></p>
+      </div>
+      <main id="main" class="junto-post-list" role="main">
         <th:block th:if="${posts.totalPages gt 0}">
           <th:block th:each="post, postStat : ${postItems}">
             <th:block th:replace="~{macro/content :: content(${post}, ${postStat.index + 1})}" />

@@ -1,36 +1,56 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org"
-  th:replace="~{layout :: layout(_title = ~{::title}, _header = ~{::header}, _content = ~{::content}, _sidebar = ~{::sidebar})}">
-<th:block th:fragment="title">
-  <th:block th:text="${post.spec.title} + '|' + ${site.title}|"></th:block>
-</th:block>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{layout :: layout(_title = ~{::title}, _header = ~{::header}, _content = ~{::content}, _sidebar = ~{::sidebar})}"
+>
+  <th:block th:fragment="title">
+    <th:block th:text="${post.spec.title} + '|' + ${site.title}|"></th:block>
+  </th:block>
 
-<th:block th:fragment="header">
-  <div class="post-header">
+  <th:block th:fragment="header">
+    <div class="junto-reading-progress" data-junto-reading-progress></div>
+    <section class="junto-article-hero">
+      <div class="junto-article-hero-inner junto-shell">
+        <div><span class="junto-eyebrow">ARTICLE / FIELD NOTE</span><th:block th:replace="~{::headerTitle}" /></div>
+        <div class="junto-article-summary">
+          <p th:text="${post.status.excerpt}"></p>
+          <div class="junto-page-meta">
+            <span th:text="|${post.stats.visit} VIEWS|">0 VIEWS</span
+            ><span th:text="|${post.stats.comment} COMMENTS|">0 COMMENTS</span>
+          </div>
+        </div>
+      </div>
+      <figure class="junto-article-cover" th:if="${not #strings.isEmpty(post.spec.cover)}">
+        <img
+          class="lazyload"
+          th:src="${#theme.assets('/images/load/orange.progress-bar-stripe-loader.svg')}"
+          th:data-src="${post.spec.cover}"
+          th:alt="${post.spec.title}"
+        />
+      </figure>
+    </section>
+  </th:block>
+
+  <th:block th:fragment="headerTitle">
+    <h1 class="junto-article-title" th:text="${post.spec.title}"></h1>
+    <div class="post-meta">
+      <th:block th:replace="~{module/post/post-meta :: post-meta(${post})}" />
+    </div>
+  </th:block>
+
+  <th:block th:fragment="content">
+    <div id="primary" class="content-area junto-article-content">
+      <th:block th:replace="~{macro/content-post :: content-post(${post})}" />
+      <th:block th:replace="~{module/post-pagination :: post-nextprev(${post})}" />
+      <th:block th:replace="~{module/authorprofile :: authorprofile(${post})}" />
+    </div>
+    <!--/* 评论组件 */-->
     <th:block
-      th:replace="~{macro/page-header :: page-header(extension = ${post}, frontCover = ${post.spec.cover}, headerTitle = ~{::headerTitle})}" />
-  </div>
-</th:block>
+      th:replace="~{module/comment :: comment(group = 'content.halo.run', kind = 'Post', name = ${post.metadata.name})}"
+    />
+  </th:block>
 
-<th:block th:fragment="headerTitle">
-  <h1 th:text="${post.spec.title}"></h1>
-  <div class="post-meta">
-    <th:block th:replace="~{module/post/post-meta :: post-meta(${post})}" />
-  </div>
-</th:block>
-
-<th:block th:fragment="content">
-  <div id="primary" class="content-area">
-    <th:block th:replace="~{macro/content-post :: content-post(${post})}" />
-    <th:block th:replace="~{module/post-pagination :: post-nextprev(${post})}" />
-    <th:block th:replace="~{module/authorprofile :: authorprofile(${post})}" />
-  </div>
-  <!--/* 评论组件 */-->
-  <th:block th:replace="~{module/comment :: comment(group = 'content.halo.run', kind = 'Post', name = ${post.metadata.name})}" />
-</th:block>
-
-<th:block th:fragment="sidebar">
-  <th:block th:replace="~{macro/sidebar :: sidebar(${#annotations.getOrDefault(post, 'toc', true)})}" />
-</th:block>
-
+  <th:block th:fragment="sidebar">
+    <th:block th:replace="~{macro/sidebar :: sidebar(${#annotations.getOrDefault(post, 'toc', true)})}" />
+  </th:block>
 </html>

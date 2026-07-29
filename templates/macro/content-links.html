@@ -1,34 +1,52 @@
 <th:block th:fragment="content-links">
-  <article class="link-article">
-    <th:block
-      th:if="${_templateId == 'page'}"
-      th:utext="${singlePage.content.content}">
-    </th:block>
-    <div class="links" th:if="${pluginFinder.available('PluginLinks')}">
-      <th:block th:each="group : ${linkFinder.groupBy()}" th:if="${not #lists.isEmpty(group.links)}">
-        <h3 class="link-title">
-          <span class="fake-title" th:text="${group.spec.displayName}"></span>
-        </h3>
-        <ul class="link-items">
-          <li 
-            class="link-item" th:each="link : ${group.links}">
-            <a 
-              class="link-item-inner" th:href="${link.spec.url}" th:title="${link.spec.displayName}"
-              target="_blank" rel="noopener noreferrer" aria-label="will visit the URL pointed to by the friend link">
-                <img 
-                  class="lazyload" 
-                  th:attr="data-src=${link.spec.logo}"
-                  th:src="${#theme.assets('/images/load/trans.ajax-spinner-preloader.svg')}" 
-                  th:alt="${link.spec.displayName}"
-                  width="65"
-                  height="65"
-                  onerror="imgError(this)">
-                <span class="sitename" th:text="${link.spec.displayName}"></span>
-                <div class="linkdes" th:text="${link.spec.description}"></div>
-            </a>
-          </li> 
-        </ul>
-      </th:block>
-    </div>       
+  <article class="junto-links junto-shell">
+    <div class="junto-page-prose" th:if="${_templateId == 'page'}" th:utext="${singlePage.content.content}"></div>
+    <div th:if="${pluginFinder.available('PluginLinks')}">
+      <section
+        class="junto-link-group"
+        th:each="group : ${linkFinder.groupBy()}"
+        th:if="${not #lists.isEmpty(group.links)}"
+      >
+        <div class="junto-link-group-head">
+          <span class="junto-eyebrow">FRIEND NETWORK / GROUP</span>
+          <h2 th:text="${group.spec.displayName}">Friends</h2>
+        </div>
+        <div class="junto-friend-grid">
+          <a
+            class="junto-friend-card"
+            th:each="link, stat : ${group.links}"
+            th:href="${link.spec.url}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div class="junto-friend-top">
+              <img
+                class="lazyload"
+                th:attr="data-src=${link.spec.logo}"
+                th:src="${#theme.assets('/images/load/trans.ajax-spinner-preloader.svg')}"
+                th:alt="${link.spec.displayName}"
+                width="72"
+                height="72"
+                onerror="imgError(this)"
+              /><span
+                class="junto-eyebrow"
+                th:text="|${stat.index + 1 &lt; 10 ? '0' + (stat.index + 1) : stat.index + 1} / LINK|"
+                >01 / LINK</span
+              >
+            </div>
+            <div>
+              <h3 th:text="${link.spec.displayName}">Friend</h3>
+              <p th:text="${link.spec.description}"></p>
+              <small>VISIT SITE ↗</small>
+            </div>
+          </a>
+        </div>
+      </section>
+    </div>
+    <div class="junto-plugin-missing" th:unless="${pluginFinder.available('PluginLinks')}">
+      <span class="junto-eyebrow">PLUGIN REQUIRED</span>
+      <h2>Friend signals<br />are offline.</h2>
+      <p>安装并启用 Halo 友情链接插件后，这里会自动展示分组和站点信息。</p>
+    </div>
   </article>
 </th:block>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{layout :: layout(_title=~{::title}, _header=~{::header}, _content=~{::content})}"
+>
+  <th:block th:fragment="title"><th:block th:text="${singlePage.spec.title} + '|' + ${site.title}" /></th:block>
+  <th:block th:fragment="header"
+    ><th:block
+      th:replace="~{macro/page-header :: page-header(extension=${singlePage}, frontCover=${singlePage.spec.cover}, headerTitle=~{::headerTitle})}"
+  /></th:block>
+  <th:block th:fragment="headerTitle"><h1 th:text="${singlePage.spec.title}">Case Study.</h1></th:block>
+  <th:block th:fragment="content"
+    ><main class="junto-case junto-shell">
+      <article class="junto-case-main">
+        <span class="junto-eyebrow">CASE STUDY / PROJECT NARRATIVE</span>
+        <div class="junto-page-prose" th:utext="${singlePage.content.content}"></div>
+      </article>
+      <aside>
+        <span class="junto-eyebrow">PROJECT FACTS</span>
+        <dl>
+          <dt>TYPE</dt>
+          <dd>HALO SINGLE PAGE</dd>
+          <dt>AUTHOR</dt>
+          <dd th:text="${singlePage.owner.displayName}">JUNTO</dd>
+          <dt>UPDATED</dt>
+          <dd th:text="${#dates.format(singlePage.status.lastModifyTime, 'yyyy.MM.dd')}">2026.07.29</dd>
+          <dt>STATUS</dt>
+          <dd>ARCHIVED / ACTIVE</dd>
+        </dl>
+      </aside>
+    </main>
+    <th:block
+      th:replace="~{module/comment :: comment(group='content.halo.run', kind='SinglePage', name=${singlePage.metadata.name})}"
+  /></th:block>
+</html>

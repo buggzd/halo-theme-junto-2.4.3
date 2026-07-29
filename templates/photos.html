@@ -1,35 +1,25 @@
-<!--
-    Template Name: photos
--->
 <!DOCTYPE html>
 <html
   xmlns:th="https://www.thymeleaf.org"
-  th:replace="~{layout :: layout(_title = ~{::title}, _header = ~{::header}, _content = ~{::content})}"
+  th:replace="~{layout :: layout(_title=~{::title}, _header=~{::header}, _content=~{::content})}"
 >
-  <th:block th:fragment="title">
-    <th:block th:text="${title} + '|' + ${site.title}"></th:block>
-  </th:block>
-
-  <th:block th:fragment="header">
-    <th:block
-      th:replace="~{macro/page-header :: page-header(extension=${photos}, frontCover=${theme.config.patternimg.photos_patternimg}, headerTitle = ~{::headerTitle}, id='photos', isRandomImage=true)}"
-    />
-  </th:block>
-
-  <th:block th:fragment="headerTitle">
-    <h1 th:text="${title}"></h1>
-  </th:block>
-
-  <th:block th:fragment="content">
-    <style>
-      .site-content {
-        padding: 0;
-      }
-    </style>
-    <div class="photos-container">
-      <section class="photos-inner">
-        <th:block th:insert="~{macro/content-masonry-photos}"></th:block>
-      </section>
-    </div>
-  </th:block>
+  <th:block th:fragment="title"><th:block th:text="${title} + '|' + ${site.title}" /></th:block>
+  <th:block th:fragment="header"
+    ><th:block
+      th:replace="~{macro/page-header :: page-header(extension=${photos}, frontCover=${theme.config.patternimg.photos_patternimg}, headerTitle=~{::headerTitle}, id='photos', isRandomImage=true)}"
+  /></th:block>
+  <th:block th:fragment="headerTitle"
+    ><h1>Unfixed<br />Gallery.</h1></th:block
+  >
+  <th:block th:fragment="content"
+    ><section class="junto-gallery-shell">
+      <div class="junto-gallery-intro junto-shell">
+        <div>
+          <span class="junto-eyebrow">WORKS / VISUAL ARCHIVE</span>
+          <h2>Loose<br />Frames.</h2>
+        </div>
+        <p>作品以不同尺度和节奏散布，而不是被压进统一商品卡片。分组来自 Halo 图库插件。</p>
+      </div>
+      <th:block th:insert="~{macro/content-masonry-photos}" /></section
+  ></th:block>
 </html>

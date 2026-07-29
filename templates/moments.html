@@ -14,11 +14,18 @@
   </th:block>
 
   <th:block th:fragment="headerTitle">
-    <h1 th:text="${title}"></h1>
+    <h1>Field<br />Notes.</h1>
   </th:block>
 
   <th:block th:fragment="content">
-    <div class="moments-container">
+    <div class="moments-container junto-moments junto-shell">
+      <div class="junto-section-heading">
+        <div>
+          <span class="junto-eyebrow">MOMENTS / SHORT SIGNALS</span>
+          <h2>Now &<br />Then.</h2>
+        </div>
+        <p>照片、短句和即时想法。保留 Halo 瞬间插件的点赞、媒体和评论能力。</p>
+      </div>
       <ul th:if="${moments.total gt 0}" class="moments-inner">
         <li class="moments-item journal" th:each="moment : ${moments.items}" th:data-name="${moment.metadata.name}">
           <th:block th:insert="~{moment :: content(${moment})}" />

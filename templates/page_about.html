@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{layout :: layout(_title=~{::title}, _header=~{::header}, _content=~{::content})}"
+>
+  <th:block th:fragment="title"><th:block th:text="${singlePage.spec.title} + '|' + ${site.title}" /></th:block>
+  <th:block th:fragment="header"
+    ><th:block
+      th:replace="~{macro/page-header :: page-header(extension=${singlePage}, frontCover=${singlePage.spec.cover}, headerTitle=~{::headerTitle})}"
+  /></th:block>
+  <th:block th:fragment="headerTitle"
+    ><h1>Junto<br />Studio.</h1></th:block
+  >
+  <th:block th:fragment="content">
+    <main class="junto-about junto-shell">
+      <section class="junto-about-copy">
+        <span class="junto-eyebrow">ABOUT / PERSON BEHIND THE SIGNAL</span>
+        <h2>Art, code,<br />and all between.</h2>
+        <div class="junto-page-prose" th:utext="${singlePage.content.content}"></div>
+      </section>
+      <section class="junto-about-cards">
+        <article>
+          <span class="junto-eyebrow">01 / IDENTITY</span>
+          <h3 th:text="${site.title}">JUNTO</h3>
+          <p th:text="${theme.config.junto.studio_label}">CG ARTIST × DEVELOPER</p>
+        </article>
+        <article>
+          <span class="junto-eyebrow">02 / GITHUB</span>
+          <h3>Open<br />Source.</h3>
+          <a th:href="${theme.config.junto.github_url}" target="_blank" rel="noreferrer">VIEW PROFILE ↗</a>
+        </article>
+        <article>
+          <span class="junto-eyebrow">03 / PIXIV</span>
+          <h3>Visual<br />Archive.</h3>
+          <a th:href="${theme.config.junto.pixiv_url}" target="_blank" rel="noreferrer">VIEW WORKS ↗</a>
+        </article>
+        <article>
+          <span class="junto-eyebrow">04 / STATUS</span>
+          <h3>Keep<br />Making.</h3>
+          <p>持续绘画、构建、记录与实验。</p>
+        </article>
+      </section>
+    </main>
+    <th:block
+      th:replace="~{module/comment :: comment(group='content.halo.run', kind='SinglePage', name=${singlePage.metadata.name})}"
+    />
+  </th:block>
+</html>

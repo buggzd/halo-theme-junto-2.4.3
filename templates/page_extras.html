@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{layout :: layout(_title=~{::title}, _header=~{::header}, _content=~{::content})}"
+>
+  <th:block th:fragment="title"><th:block th:text="${singlePage.spec.title} + '|' + ${site.title}" /></th:block>
+  <th:block th:fragment="header"
+    ><th:block
+      th:replace="~{macro/page-header :: page-header(extension=${singlePage}, frontCover=${singlePage.spec.cover}, headerTitle=~{::headerTitle})}"
+  /></th:block>
+  <th:block th:fragment="headerTitle"
+    ><h1>Side<br />Index.</h1></th:block
+  >
+  <th:block th:fragment="content"
+    ><main class="junto-extras junto-shell">
+      <div class="junto-section-heading">
+        <div>
+          <span class="junto-eyebrow">MORE / SIDE CHANNELS</span>
+          <h2>Everything<br />Else.</h2>
+        </div>
+        <p>番剧、网站收藏、Meme、语录、RSS 与所有不适合塞进主导航的入口。</p>
+      </div>
+      <article class="junto-portal-content junto-page-prose" th:utext="${singlePage.content.content}"></article>
+    </main>
+    <th:block
+      th:replace="~{module/comment :: comment(group='content.halo.run', kind='SinglePage', name=${singlePage.metadata.name})}"
+  /></th:block>
+</html>

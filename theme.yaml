@@ -5,8 +5,24 @@ spec:
     page:
       - name: 友情链接
         description: 支持可预设文本的友链
-        screenshot: 
+        screenshot:
         file: page_links.html
+      - name: 关于 / About
+        description: Junto 编辑风个人介绍页
+        screenshot:
+        file: page_about.html
+      - name: 项目图谱 / Projects
+        description: 主题设置驱动的项目图谱与 GitHub 仓库列表
+        screenshot:
+        file: page_projects.html
+      - name: 项目案例 / Case Study
+        description: 用单页正文展示项目背景、过程和路线图
+        screenshot:
+        file: page_project.html
+      - name: 更多入口 / Side Index
+        description: 番剧、收藏、Meme、语录与其他内容入口
+        screenshot:
+        file: page_extras.html
   displayName: Junto Blue Archive
   author:
     name: buggzd

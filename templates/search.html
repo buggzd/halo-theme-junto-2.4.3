@@ -1,41 +1,50 @@
 <!DOCTYPE html>
 <html
   xmlns:th="https://www.thymeleaf.org"
-  th:replace="~{layout :: layout(_title = ~{::title}, _header = ~{::header}, _content = ~{::content})}"
+  th:replace="~{layout :: layout(_title=~{::title}, _header=~{::header}, _content=~{::content})}"
 >
-  <th:block th:fragment="title">
-    <th:block th:text="${searchResult.keyword} + '|' + ${site.title}"></th:block>
-  </th:block>
-
+  <th:block th:fragment="title"><th:block th:text="${searchResult.keyword} + '|' + ${site.title}" /></th:block>
+  <th:block th:fragment="header"
+    ><section class="junto-page-hero">
+      <div class="junto-page-hero-inner junto-shell">
+        <div>
+          <span class="junto-eyebrow">SEARCH / COMMAND</span>
+          <div class="junto-page-title">
+            <h1>Find<br />Anything.</h1>
+          </div>
+        </div>
+        <div class="junto-page-summary">
+          <p>搜索文章、页面与瞬间。结果继续使用 Halo 搜索插件提供的实时索引。</p>
+          <div class="junto-page-meta"><span>POSTS</span><span>PAGES</span><span>MOMENTS</span></div>
+        </div>
+      </div>
+      <div class="junto-page-orb"></div></section
+  ></th:block>
   <th:block th:fragment="content">
-    <div class="search-container">
-      <th:block th:if="${searchResult.total gt 0}">
-        <h1
-          class="search-title"
-          data-i18n="search.search_result.title"
-          th:i18n-options="|{keyword: '${searchResult.keyword}'}|"
-        ></h1>
-        <th:block th:each="document : ${searchResult.hits}">
-          <th:block th:replace="~{module/search/search-item :: item(${document})}" />
-        </th:block>
-      </th:block>
-      <th:block th:unless="${searchResult.total gt 0}">
-        <div class="search-box">
-          <form class="search-form-inner" method="get" action="/search" role="search">
-            <span class="iconify icon-search" data-icon="solar:magnifer-outline"> </span>
-            <input
-              type="search"
-              name="keyword"
-              data-i18n="[placeholder]search.search_modal.placeholder"
-              required
-            />
-          </form>
-        </div>
-        <div class="search-empty">
-          <p data-i18n="search.search-empty"></p>
-        </div>
-        <th:block th:replace="~{macro/content-none}" />
-      </th:block>
-    </div>
+    <main class="junto-search junto-shell">
+      <form class="junto-search-form" method="get" action="/search" role="search">
+        <input
+          type="search"
+          name="keyword"
+          th:value="${searchResult.keyword}"
+          placeholder="输入关键词…"
+          required
+          autofocus
+        /><button type="submit">SEARCH ↗</button>
+      </form>
+      <div class="junto-search-count">
+        <span class="junto-eyebrow" th:text="|${searchResult.total} RESULTS / HALO INDEX|">0 RESULTS</span>
+      </div>
+      <div class="junto-search-results" th:if="${searchResult.total gt 0}">
+        <th:block th:each="document : ${searchResult.hits}"
+          ><th:block th:replace="~{module/search/search-item :: item(${document})}"
+        /></th:block>
+      </div>
+      <div class="junto-plugin-missing" th:unless="${searchResult.total gt 0}">
+        <span class="junto-eyebrow">NO MATCHED SIGNAL</span>
+        <h2>Nothing<br />found.</h2>
+        <p>换一个关键词，或从导航进入归档、分类和标签页继续浏览。</p>
+      </div>
+    </main>
   </th:block>
 </html>

@@ -23,7 +23,7 @@
       <meta itemprop="description" th:content="${post.status.excerpt}" />
     </span>
 
-    <div class="entry-content fancybox-content" itemprop="articleBody">
+    <div class="entry-content fancybox-content junto-page-prose" itemprop="articleBody">
       <th:block th:utext="${post.content.content}"></th:block>
     </div>
 
@@ -35,16 +35,13 @@
         </p>
       </div>
 
-      <div
-        th:if="${not #arrays.isEmpty(theme.config.post.reward)}"
-        class="single-reward"
-      >
+      <div th:if="${not #arrays.isEmpty(theme.config.post.reward)}" class="single-reward">
         <div class="reward-open">
           <span data-i18n="post.reward"></span>
           <div class="reward-main">
             <ul class="reward-row">
               <li th:each="item : ${theme.config.post.reward}">
-                <img th:src="${item.code}" alt="reword" width="325" height="325"/>
+                <img th:src="${item.code}" alt="reword" width="325" height="325" />
                 <span class="reward-name" th:text="${item.label}"></span>
               </li>
             </ul>
@@ -53,15 +50,20 @@
       </div>
       <div class="post-footer-meta">
         <div class="post-license" itemprop="license">
-          <a class="flex-child-center" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="nofollow"
-            aria-label="accessing the Creative Commons License">
+          <a
+            class="flex-child-center"
+            href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+            target="_blank"
+            rel="nofollow"
+            aria-label="accessing the Creative Commons License"
+          >
             <span class="iconify" data-icon="fa:creative-commons"></span>
             <span data-i18n="post.license"></span>
           </a>
         </div>
         <div class="post-tags flex-child-center">
           <th:block th:if="${not #lists.isEmpty(post.tags)}">
-            <span class="iconify" data-icon="system-uicons:tags" style="scale: 1.3;"></span>
+            <span class="iconify" data-icon="system-uicons:tags" style="scale: 1.3"></span>
             <a
               th:each="tag : ${post.tags}"
               th:href="@{${tag.status.permalink}}"

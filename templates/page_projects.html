@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{layout :: layout(_title=~{::title}, _header=~{::header}, _content=~{::content})}"
+>
+  <th:block th:fragment="title"><th:block th:text="${singlePage.spec.title} + '|' + ${site.title}" /></th:block>
+  <th:block th:fragment="header"
+    ><th:block
+      th:replace="~{macro/page-header :: page-header(extension=${singlePage}, frontCover=${singlePage.spec.cover}, headerTitle=~{::headerTitle})}"
+  /></th:block>
+  <th:block th:fragment="headerTitle"
+    ><h1>Project<br />Atlas.</h1></th:block
+  >
+  <th:block th:fragment="content">
+    <main class="junto-projects">
+      <section class="junto-project-atlas">
+        <div class="junto-project-head junto-shell">
+          <div>
+            <span class="junto-eyebrow">BUILD / SELECTED PROJECTS</span>
+            <h2>Things<br />I Build.</h2>
+          </div>
+          <p>移动到项目名称，左侧材质会切换。内容来自 Junto 主题设置，并可直接指向仓库或 Halo 项目案例页。</p>
+        </div>
+        <div class="junto-project-layout junto-shell">
+          <div class="junto-project-preview" data-junto-project-preview data-visual="pixel">
+            <div>
+              <small data-junto-project-meta>PROJECT / ACTIVE</small>
+              <h3 data-junto-project-title>Junto Archive</h3>
+            </div>
+          </div>
+          <div class="junto-project-index">
+            <a
+              th:each="project, stat : ${theme.config.junto.projects}"
+              th:href="${project.url}"
+              th:target="${#strings.startsWith(project.url, 'http') ? '_blank' : '_self'}"
+              rel="noreferrer"
+              data-junto-project
+              th:data-visual="${project.visual}"
+              th:data-title="${project.title}"
+              th:data-meta="${project.tech}"
+              ><span th:text="${stat.index + 1 &lt; 10 ? '0' + (stat.index + 1) : stat.index + 1}">01</span>
+              <div>
+                <h3 th:text="${project.title}">Project</h3>
+                <p th:text="${project.description}"></p>
+              </div>
+              <small th:text="|${project.tech} →|">DETAIL →</small></a
+            >
+          </div>
+        </div>
+      </section>
+      <section class="junto-repos junto-shell">
+        <div class="junto-section-heading">
+          <div>
+            <span class="junto-eyebrow">LIVE / PUBLIC REPOSITORIES</span>
+            <h2>Raw<br />Repos.</h2>
+          </div>
+          <p>公开仓库通过 GitHub API 实时补充；请求失败时不会影响精选项目和页面正文。</p>
+        </div>
+        <div class="junto-repo-table" th:attr="data-junto-repos=${theme.config.junto.github_username}"></div>
+        <p class="junto-eyebrow" data-junto-repo-status>LOADING GITHUB SIGNAL…</p>
+      </section>
+      <div class="junto-page-prose junto-shell" th:utext="${singlePage.content.content}"></div>
+    </main>
+  </th:block>
+</html>

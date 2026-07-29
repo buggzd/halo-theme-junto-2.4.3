@@ -9,8 +9,15 @@
 - [x] 新首页首屏、滚动信号条和动态文章索引
 - [x] 新导航与页脚
 - [x] 文章正文的编辑风排版
-- [ ] 将图库、项目、归档和搜索页逐页升级为参考模板的专属布局
-- [ ] 接入真实 Halo 环境完成插件联调和视觉回归
+- [x] 图库、友链、瞬间、项目、归档、分类、标签和搜索专属布局
+- [x] About、Projects、Case Study、Side Index 自定义单页模板
+- [x] Halo 2.20.14 与 2.25.4 真实运行环境联调、移动端视觉回归
+
+## 兼容性
+
+- Halo：`>= 2.19.0`，已重点验证 `2.20.14`
+- Halo 2.20.14 推荐插件版本：图库 `1.4.0`、友链 `1.5.0`、瞬间 `1.9.0`
+- 评论、搜索、图库、友链和瞬间均为可选插件；未安装图库插件时，首页会显示明确的空状态
 
 ## 开发
 
@@ -68,9 +75,10 @@ DEMO：[https://lixingyong.com/](https://lixingyong.com/)
 1. 点击上方链接直达或者进入 Halo 官方应用市场，找到本主题。
 2. 点击左下角 `下载` 按钮。
 3. 弹出的对话框中，输入自己的网站地址，点击安装。
-  ![Alt text](./docs/image.png)
+   ![Alt text](./docs/image.png)
 
 #### 手动安装
+
 1. 点击[下载](https://github.com/LIlGG/halo-theme-sakura/archive/next.zip)
 2. 进入 Halo 后台 -> 主题
 3. 点击右上角 “主题”， 在弹出的窗口中选择 “安装主题”
@@ -78,6 +86,7 @@ DEMO：[https://lixingyong.com/](https://lixingyong.com/)
 5. 安装完成后的主题将会出现在 “未安装” 内，点击启用主题
 
 ### 插件依赖
+
 > 所有插件均为可选，不安装则不会出现对应功能。部分插件可能已经预设在 Halo 内。
 
 - 评论功能，需插件 [plugin-comment-widget](https://github.com/halo-sigs/plugin-comment-widget/releases)
@@ -124,10 +133,12 @@ DEMO：[https://lixingyong.com/](https://lixingyong.com/)
 - [x] 用户登录及文章所属用户
 
 > Tip:
->> 上述功能大部分均可配置。具体操作在 后台 -> 外观 -> 主题 -> 设置 中进行配置
+>
+> > 上述功能大部分均可配置。具体操作在 后台 -> 外观 -> 主题 -> 设置 中进行配置
+
 </details>
 
-## <img src="https://media.giphy.com/media/WUlplcMpOCEmTGBtBW/giphy.gif" width="30">  待适配功能
+## <img src="https://media.giphy.com/media/WUlplcMpOCEmTGBtBW/giphy.gif" width="30"> 待适配功能
 
 - [ ] 自定义邮件模板，需等待 Halo 支持
 - [ ] 自定义符合主题的评论插件
@@ -138,24 +149,24 @@ DEMO：[https://lixingyong.com/](https://lixingyong.com/)
 
 2.x 在很多功能上做了优化，并且较于 1.x 在性能上有了巨大提升，后续将会持续支持 2.x 相关功能，因此目前推荐进行升级，下述表格仅供参考。
 
-|  功能 | 2.x | 1.x | 备注 |
-| :---: | :---: | :---: | :---: |
-| 全站 Pjax | √ | √ |  |
-| 主题资源异步加载 | √ | × |  |
-| 主题资源延迟加载 | √ | × |  |
-| SEO 优化 | √ | × |  |
-| 移动端适配 | √ | √ |  |
-| 深色模式 | √ | √ |  |
-| 主题自定义评论 | × | √ |  |
-| 路由搜索 | √ | √ | 2.x 支持插件搜索及路由搜索 |
-| 邮件模板 | × | √ |  |
-| 看板娘 | √ | √ | 2.x 使用插件支持，并且可以基于 ChatGPT 进行对话 |
-| 首页视频 | √ | √ | 2.x 不再支持失效的接口，但默认的本地视频支持 HLS 等流视频 |
-| 背景音乐 | √ | √ | 2.x 使用 Meting 接口，因此能够支持多种渠道的音乐 |
-| 文章内音乐 | × | √ | 不再支持文章内使用音乐，后续可能使用插件实现 |
-| 说说 | √ | √ | 2.x 改名为瞬间 |
-| 图库 | √ | √ |  |
-| 友链 | √ | √ |  |
+|       功能       | 2.x | 1.x |                           备注                            |
+| :--------------: | :-: | :-: | :-------------------------------------------------------: |
+|    全站 Pjax     |  √  |  √  |                                                           |
+| 主题资源异步加载 |  √  |  ×  |                                                           |
+| 主题资源延迟加载 |  √  |  ×  |                                                           |
+|     SEO 优化     |  √  |  ×  |                                                           |
+|    移动端适配    |  √  |  √  |                                                           |
+|     深色模式     |  √  |  √  |                                                           |
+|  主题自定义评论  |  ×  |  √  |                                                           |
+|     路由搜索     |  √  |  √  |                2.x 支持插件搜索及路由搜索                 |
+|     邮件模板     |  ×  |  √  |                                                           |
+|      看板娘      |  √  |  √  |      2.x 使用插件支持，并且可以基于 ChatGPT 进行对话      |
+|     首页视频     |  √  |  √  | 2.x 不再支持失效的接口，但默认的本地视频支持 HLS 等流视频 |
+|     背景音乐     |  √  |  √  |     2.x 使用 Meting 接口，因此能够支持多种渠道的音乐      |
+|    文章内音乐    |  ×  |  √  |       不再支持文章内使用音乐，后续可能使用插件实现        |
+|       说说       |  √  |  √  |                      2.x 改名为瞬间                       |
+|       图库       |  √  |  √  |                                                           |
+|       友链       |  √  |  √  |                                                           |
 
 ## ☃️ 贡献者
 
@@ -183,13 +194,14 @@ DEMO：[https://lixingyong.com/](https://lixingyong.com/)
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-该项目遵循 [所有参与者](https://github.com/kentcdodds/all-contributors) 规范。 
+该项目遵循 [所有参与者](https://github.com/kentcdodds/all-contributors) 规范。
 
 ## 赞助
+
 > 由于主题开发需要一定的周期，再加上主题内部 API 所需的服务器和 CDN 都是一笔不小的开支，如果您喜欢我的主题，可以考虑资助一下~ 您的支持将是我继续开发主题的动力。
 
-| <img src="https://cdn.lixingyong.com/img/other/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210114094011.jpg" width="160px;"/><br /><b>微信</b><br /> | <img src="https://v-lxy-cdn.oss-cn-beijing.aliyuncs.com/img/other/%E6%94%AF%E4%BB%98%E5%AE%9D.png" width="160px;"/><br /><b>支付宝</b><br />  | 
-| :---: | :---: |
+| <img src="https://cdn.lixingyong.com/img/other/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210114094011.jpg" width="160px;"/><br /><b>微信</b><br /> | <img src="https://v-lxy-cdn.oss-cn-beijing.aliyuncs.com/img/other/%E6%94%AF%E4%BB%98%E5%AE%9D.png" width="160px;"/><br /><b>支付宝</b><br /> |
+| :---------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------: |
 
 欢迎其他各种形式的捐助！
 
@@ -201,4 +213,5 @@ DEMO：[https://lixingyong.com/](https://lixingyong.com/)
 > [lixingyong.com](https://lixingyong.com) · GitHub [@LIlGG](https://github.com/LIlGG)
 
 ## 希望你喜欢！
+
 ![Alt](https://repobeats.axiom.co/api/embed/eab24fbf7d81ae1311c1a7a5878505e66b427bc2.svg "Repobeats analytics image")

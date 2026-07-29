@@ -7,10 +7,14 @@
         <a th:href="@{/archives}" data-pjax>Archive</a>
         <a th:href="@{/links}" data-pjax>Friends</a>
         <a href="/rss.xml">RSS</a>
-        <a href="https://github.com/buggzd" target="_blank" rel="noreferrer">GitHub ↗</a>
+        <a th:href="${theme.config.junto.pixiv_url}" target="_blank" rel="noreferrer">Pixiv ↗</a>
+        <a th:href="${theme.config.junto.github_url}" target="_blank" rel="noreferrer">GitHub ↗</a>
         <a href="https://halo.run" target="_blank" rel="noreferrer">Powered by Halo ↗</a>
       </div>
-      <small class="junto-mono">© <th:block th:text="${#dates.format(new java.util.Date().getTime(), 'yyyy')}" /> <th:block th:text="${site.title}" /> / JUNTO THEME</small>
+      <small class="junto-mono"
+        >© <th:block th:text="${#dates.format(new java.util.Date().getTime(), 'yyyy')}" />
+        <th:block th:text="${site.title}" /> / JUNTO THEME</small
+      >
     </div>
     <halo:footer />
   </div>
