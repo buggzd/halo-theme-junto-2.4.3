@@ -1,4 +1,5 @@
 import { documentFunction, sakura } from "../main";
+import { buildPixivImage, buildPixivLink, loadPixivFeed, type PixivWork } from "../module/pixiv";
 
 export default class Index {
   /**
@@ -174,5 +175,55 @@ export default class Index {
         videoPlayer.pause();
       }
     });
+  }
+
+  /** 使用经 Cloudflare 缓存的 Feed 填充首页精选作品。 */
+  @documentFunction()
+  public registerPixivWorks() {
+    const container = document.querySelector<HTMLElement>("[data-junto-pixiv-home]");
+    if (!container || container.dataset.juntoPixivLoaded) return;
+    container.dataset.juntoPixivLoaded = "loading";
+    const grid = container.querySelector<HTMLElement>("[data-junto-pixiv-home-grid]");
+    const status = container.querySelector<HTMLElement>("[data-junto-pixiv-status]");
+    loadPixivFeed(container.dataset.juntoPixivFeed || "")
+      .then((feed) => {
+        if (!grid || !feed.works.length) throw new Error("Pixiv feed is empty");
+        grid.replaceChildren(...feed.works.slice(0, 5).map((work, index) => this.buildPixivWork(work, index)));
+        if (status) status.hidden = true;
+        container.dataset.juntoPixivLoaded = "true";
+      })
+      .catch((error) => {
+        console.warn("Pixiv home works unavailable", error);
+        container.dataset.juntoPixivLoaded = "error";
+        const fallback = Array.from(document.querySelectorAll<HTMLElement>("[data-junto-halo-home-fallback]"));
+        if (fallback.length) {
+          container.hidden = true;
+          fallback.forEach((element) => (element.hidden = false));
+          return;
+        }
+        if (status) {
+          const message = status.querySelector("span");
+          if (message) message.textContent = "画面暂时迷失在途中，稍后再来看看。";
+          status.classList.add("is-error");
+        }
+      });
+  }
+
+  private buildPixivWork(work: PixivWork, index: number) {
+    const link = buildPixivLink(work);
+    link.className = "junto-home-work";
+    link.title = work.title;
+    const visual = document.createElement("div");
+    visual.className = "junto-home-work-visual";
+    visual.append(buildPixivImage(work));
+    const caption = document.createElement("span");
+    const title = document.createElement("strong");
+    title.textContent = work.title;
+    const meta = document.createElement("small");
+    const pages = work.pageCount && work.pageCount > 1 ? ` × ${work.pageCount}` : "";
+    meta.textContent = `${String(index + 1).padStart(2, "0")} / PIXIV${pages}`;
+    caption.append(title, meta);
+    link.append(visual, caption);
+    return link;
   }
 }

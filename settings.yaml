@@ -603,6 +603,33 @@ spec:
     - group: photos
       label: 相册页
       formSchema:
+        - $formkit: textarea
+          name: intro_text
+          label: 图库介绍
+          value: 散落的色彩与片刻，在这里重新组成一段持续生长的视觉叙事。
+        - $formkit: select
+          name: artwork_source
+          id: artwork_source
+          key: artwork_source
+          label: 视觉作品来源
+          value: halo
+          help: 同时控制 Photo 页面和首页精选作品；启用 Pixiv 前请先部署随主题附带的 Cloudflare Worker。
+          options:
+            - value: halo
+              label: Halo 图库
+            - value: pixiv
+              label: Pixiv（Cloudflare 代理）
+        - $formkit: text
+          if: "$get(artwork_source).value == pixiv"
+          name: pixiv_feed_url
+          label: Pixiv Feed 地址
+          placeholder: https://pixiv-api.example.com/feed
+          help: 填写 Cloudflare Worker 的 /feed 地址，主题不会直接连接 Pixiv。
+        - $formkit: checkbox
+          if: "$get(artwork_source).value == pixiv"
+          name: pixiv_halo_fallback
+          label: Pixiv 读取失败时回退到 Halo 图库
+          value: true
         - $formkit: text
           name: default_group
           label: 默认展示分组

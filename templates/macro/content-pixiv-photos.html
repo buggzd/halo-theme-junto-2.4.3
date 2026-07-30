@@ -1,0 +1,39 @@
+<th:block th:fragment="content-pixiv-photos">
+  <div
+    class="masonry-container junto-gallery junto-pixiv-gallery"
+    data-junto-pixiv-gallery
+    th:attr="data-junto-pixiv-feed=${theme.config.photos.pixiv_feed_url},data-junto-pixiv-profile=${theme.config.junto.pixiv_url}"
+  >
+    <div class="masonry-tools junto-gallery-tools">
+      <div class="photos-group">
+        <nav aria-label="Pixiv gallery">
+          <ul>
+            <li>
+              <a th:href="${theme.config.junto.pixiv_url}" target="_blank" rel="noreferrer">PIXIV / JUNTO ↗</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <nav id="grid-changer" class="grid-changer" aria-label="gallery density">
+        <ul>
+          <li><span class="active" th:data-col="|${theme.config.photos.masonry_changer_min}|">LARGE</span></li>
+          <li><span th:data-col="|${theme.config.photos.masonry_changer_max}|">DENSE</span></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="photos-content loading">
+      <div class="junto-pixiv-status" data-junto-pixiv-status role="status">
+        <span>正在让画面穿过云层抵达这里…</span>
+        <a th:href="${theme.config.junto.pixiv_url}" target="_blank" rel="noreferrer">VIEW PIXIV ↗</a>
+      </div>
+      <div class="gallery masonry-gallery junto-gallery-grid" data-junto-pixiv-grid></div>
+    </div>
+  </div>
+  <div
+    data-junto-halo-photos-fallback
+    hidden
+    th:if="${theme.config.photos.pixiv_halo_fallback and pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll())}"
+  >
+    <th:block th:insert="~{macro/content-masonry-photos}" />
+  </div>
+</th:block>

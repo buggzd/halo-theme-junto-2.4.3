@@ -280,20 +280,25 @@ const setupCurrentNavigation = () => {
 
 const setupReveals = () => {
   const items = $$(
-    ".junto-section-heading,.junto-taxonomy-card,.junto-friend-card,.junto-art-card,.junto-project-index > a,.junto-home-route-copy,.junto-home-works-head,.junto-home-project-copy,.junto-home-project-list > a,.junto-index-head,.junto-index article"
-  ).filter((item) => !item.classList.contains("junto-reveal"));
+    ".junto-reveal,.junto-section-heading,.junto-taxonomy-card,.junto-friend-card,.junto-art-card,.junto-project-index > a,.junto-home-route-copy,.junto-home-works-head,.junto-home-project-copy,.junto-home-project-list > a,.junto-index-head,.junto-index article"
+  ).filter((item) => {
+    const element = item as HTMLElement;
+    item.classList.add("junto-reveal");
+    if (element.dataset.juntoRevealBound) return false;
+    element.dataset.juntoRevealBound = "true";
+    return !item.classList.contains("in");
+  });
   if (!items.length) return;
   const observer = new IntersectionObserver(
     (entries) =>
       entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add("in");
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("in");
+        observer.unobserve(entry.target);
       }),
     { threshold: 0.08 }
   );
-  items.forEach((item) => {
-    item.classList.add("junto-reveal");
-    observer.observe(item);
-  });
+  items.forEach((item) => observer.observe(item));
 };
 
 const setupMotionInteractions = () => {

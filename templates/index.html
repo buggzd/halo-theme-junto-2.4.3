@@ -68,7 +68,7 @@
             >绘画、同人、像素与过程档案</small
           ></a
         >
-        <a data-pjax data-junto-depth="-.035" th:href="@{/categories}"
+        <a data-pjax data-junto-depth="-.035" th:href="@{/projects}"
           ><th:block th:text="${theme.config.junto.route_projects_label ?: 'Projects'}">Projects</th:block
           ><small th:text="${theme.config.junto.route_projects_description ?: '开源工具、Shader 与创作案例'}"
             >开源工具、Shader 与创作案例</small
@@ -95,59 +95,81 @@
           最近整理的视觉作品、插画与创作过程。
         </p>
       </div>
-      <div
-        class="junto-free-wall"
-        data-junto-drag-board
-        th:if="${pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll())}"
+      <th:block
+        th:with="pixivEnabled=${theme.config.photos.artwork_source == 'pixiv' and not #strings.isEmpty(theme.config.photos.pixiv_feed_url)}"
       >
-        <div class="junto-free-wall-canvas fancybox-content" data-junto-drag-canvas>
-          <a
-            class="junto-home-work"
-            th:each="photo, stat : ${photoFinder.listAll()}"
-            th:if="${stat.index lt 5}"
-            th:href="${photo.spec.url}"
-            th:title="${photo.spec.displayName}"
-          >
-            <div class="junto-home-work-visual">
-              <img
-                class="lazyload"
-                th:src="${#strings.isEmpty(photo.spec.cover) ? #theme.assets('/images/load/load.gif') : photo.spec.cover}"
-                th:data-src="${photo.spec.url}"
-                th:alt="${photo.spec.displayName}"
-              />
-            </div>
-            <span
-              ><strong th:text="${photo.spec.displayName}">Untitled</strong
-              ><small th:text="|0${stat.index + 1} / ${theme.config.junto.works_item_label ?: 'VISUAL'}|"
-                >01 / VISUAL</small
-              ></span
-            >
-          </a>
-        </div>
-      </div>
-      <div
-        class="junto-home-works-empty junto-shell"
-        th:unless="${pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll())}"
-      >
-        <span class="junto-eyebrow" th:text="${theme.config.junto.works_empty_kicker ?: 'VISUAL ARCHIVE / COMING SOON'}"
-          >VISUAL ARCHIVE / COMING SOON</span
+        <div
+          class="junto-free-wall junto-pixiv-home"
+          data-junto-drag-board
+          data-junto-pixiv-home
+          th:if="${pixivEnabled}"
+          th:attr="data-junto-pixiv-feed=${theme.config.photos.pixiv_feed_url},data-junto-pixiv-profile=${theme.config.junto.pixiv_url}"
         >
-        <h3 th:text="${theme.config.junto.works_empty_title ?: 'Visual archive awaiting signal.'}">
-          Visual archive awaiting signal.
-        </h3>
-        <p th:text="${theme.config.junto.works_empty_description ?: '这里还没有公开的视觉作品，稍后再来看看吧。'}">
-          这里还没有公开的视觉作品，稍后再来看看吧。
-        </p>
-      </div>
-      <a
-        class="junto-home-more junto-shell"
-        data-pjax
-        th:if="${pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll())}"
-        th:href="@{/photos}"
-        ><th:block th:text="${theme.config.junto.works_more_text ?: 'VIEW COMPLETE VISUAL ARCHIVE →'}"
-          >VIEW COMPLETE VISUAL ARCHIVE →</th:block
-        ></a
-      >
+          <div class="junto-free-wall-canvas" data-junto-drag-canvas data-junto-pixiv-home-grid></div>
+          <div class="junto-pixiv-home-status" data-junto-pixiv-status role="status">
+            <span>正在接收来自 Pixiv 的最新画面…</span>
+            <a th:href="${theme.config.junto.pixiv_url}" target="_blank" rel="noreferrer">VIEW PIXIV ↗</a>
+          </div>
+        </div>
+        <div
+          class="junto-free-wall"
+          data-junto-drag-board
+          th:if="${pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll())}"
+          th:hidden="${pixivEnabled}"
+          th:attr="data-junto-halo-home-fallback=${pixivEnabled and theme.config.photos.pixiv_halo_fallback ? 'true' : null}"
+        >
+          <div class="junto-free-wall-canvas fancybox-content" data-junto-drag-canvas>
+            <a
+              class="junto-home-work"
+              th:each="photo, stat : ${photoFinder.listAll()}"
+              th:if="${stat.index lt 5}"
+              th:href="${photo.spec.url}"
+              th:title="${photo.spec.displayName}"
+            >
+              <div class="junto-home-work-visual">
+                <img
+                  class="lazyload"
+                  th:src="${#strings.isEmpty(photo.spec.cover) ? #theme.assets('/images/load/load.gif') : photo.spec.cover}"
+                  th:data-src="${photo.spec.url}"
+                  th:alt="${photo.spec.displayName}"
+                />
+              </div>
+              <span
+                ><strong th:text="${photo.spec.displayName}">Untitled</strong
+                ><small th:text="|0${stat.index + 1} / ${theme.config.junto.works_item_label ?: 'VISUAL'}|"
+                  >01 / VISUAL</small
+                ></span
+              >
+            </a>
+          </div>
+        </div>
+        <div
+          class="junto-home-works-empty junto-shell"
+          th:unless="${pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll())}"
+          th:hidden="${pixivEnabled}"
+        >
+          <span
+            class="junto-eyebrow"
+            th:text="${theme.config.junto.works_empty_kicker ?: 'VISUAL ARCHIVE / COMING SOON'}"
+            >VISUAL ARCHIVE / COMING SOON</span
+          >
+          <h3 th:text="${theme.config.junto.works_empty_title ?: 'Visual archive awaiting signal.'}">
+            Visual archive awaiting signal.
+          </h3>
+          <p th:text="${theme.config.junto.works_empty_description ?: '这里还没有公开的视觉作品，稍后再来看看吧。'}">
+            这里还没有公开的视觉作品，稍后再来看看吧。
+          </p>
+        </div>
+        <a
+          class="junto-home-more junto-shell"
+          data-pjax
+          th:if="${pixivEnabled or (pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll()))}"
+          th:href="@{/photos}"
+          ><th:block th:text="${theme.config.junto.works_more_text ?: 'VIEW COMPLETE VISUAL ARCHIVE →'}"
+            >VIEW COMPLETE VISUAL ARCHIVE →</th:block
+          ></a
+        >
+      </th:block>
     </section>
 
     <section class="junto-home-projects">
@@ -160,9 +182,7 @@
           <p th:text="${theme.config.junto.projects_description ?: '持续维护的工具、视觉实验与个人项目。'}">
             持续维护的工具、视觉实验与个人项目。
           </p>
-          <a class="junto-primary-button" data-pjax data-junto-magnetic th:href="@{/categories}"
-            >OPEN PROJECT ATLAS →</a
-          >
+          <a class="junto-primary-button" data-pjax data-junto-magnetic th:href="@{/projects}">OPEN PROJECT ATLAS →</a>
         </div>
         <div class="junto-home-project-list">
           <a

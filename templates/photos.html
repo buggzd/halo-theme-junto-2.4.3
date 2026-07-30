@@ -18,8 +18,17 @@
           <span class="junto-eyebrow">WORKS / VISUAL ARCHIVE</span>
           <h2>Loose<br />Frames.</h2>
         </div>
-        <p>作品以不同尺度和节奏散布，而不是被压进统一商品卡片。分组来自 Halo 图库插件。</p>
+        <p th:text="${theme.config.photos.intro_text ?: '散落的色彩与片刻，在这里重新组成一段持续生长的视觉叙事。'}">
+          散落的色彩与片刻，在这里重新组成一段持续生长的视觉叙事。
+        </p>
       </div>
-      <th:block th:insert="~{macro/content-masonry-photos}" /></section
+      <th:block
+        th:if="${theme.config.photos.artwork_source == 'pixiv' and not #strings.isEmpty(theme.config.photos.pixiv_feed_url)}"
+        th:insert="~{macro/content-pixiv-photos}"
+      />
+      <th:block
+        th:unless="${theme.config.photos.artwork_source == 'pixiv' and not #strings.isEmpty(theme.config.photos.pixiv_feed_url)}"
+        th:insert="~{macro/content-masonry-photos}"
+      /></section
   ></th:block>
 </html>

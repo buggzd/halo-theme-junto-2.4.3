@@ -16,6 +16,8 @@ bin/
 .factorypath
 
 node_modules
+.DS_Store
+/integrations/pixiv-worker/.wrangler/
 
 #VS Code
 .vscode

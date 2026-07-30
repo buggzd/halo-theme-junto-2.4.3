@@ -1592,8 +1592,17 @@ body.junto-theme::before {
   letter-spacing: 0.1em;
   cursor: pointer;
 }
+.junto-gallery-tools .photos-group a {
+  display: block;
+  padding: 9px 12px;
+  color: inherit;
+  text-decoration: none;
+  font: 750 10px/1 ui-monospace, monospace;
+  letter-spacing: 0.1em;
+}
 .junto-gallery-tools li span.active,
-.junto-gallery-tools li span:hover {
+.junto-gallery-tools li span:hover,
+.junto-gallery-tools .photos-group a:hover {
   color: white;
   background: var(--junto-ink);
 }
@@ -1632,6 +1641,9 @@ body.junto-theme::before {
 .junto-art-card .gallery-icon {
   overflow: hidden;
 }
+.junto-art-card .gallery-icon > a {
+  display: block;
+}
 .junto-art-card .gallery-icon img {
   width: 100%;
   height: auto;
@@ -1651,10 +1663,59 @@ body.junto-theme::before {
   line-height: 0.9;
   letter-spacing: -0.045em;
 }
+.junto-art-card figcaption h3 a {
+  color: inherit;
+  text-decoration: none;
+}
 .junto-art-card figcaption p {
   margin: 10px 0 0;
   font-size: 12px;
   line-height: 1.5;
+}
+.junto-pixiv-status {
+  min-height: 46vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  color: rgba(255, 255, 255, 0.68);
+  text-align: center;
+  font: 700 11px/1.6 ui-monospace, monospace;
+  letter-spacing: 0.12em;
+}
+.junto-pixiv-status a,
+.junto-pixiv-home-status a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+.junto-pixiv-status.is-error,
+.junto-pixiv-home-status.is-error {
+  color: var(--junto-ice);
+}
+.junto-pixiv-home-status {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: min(460px, calc(100vw - 48px));
+  color: rgba(255, 255, 255, 0.68);
+  text-align: center;
+  transform: translate(-50%, -50%);
+  font: 700 11px/1.6 ui-monospace, monospace;
+  letter-spacing: 0.12em;
+}
+.junto-pixiv-gallery[hidden],
+[data-junto-halo-photos-fallback][hidden],
+.junto-pixiv-home[hidden],
+[data-junto-halo-home-fallback][hidden],
+.junto-pixiv-status[hidden],
+.junto-pixiv-home-status[hidden] {
+  display: none !important;
 }
 
 /* Friend network */

@@ -1,0 +1,18 @@
+name = "junto-pixiv-feed"
+main = "src/index.js"
+compatibility_date = "2026-07-30"
+
+routes = [
+  { pattern = "pixiv-api.dongjunto.xyz", custom_domain = true }
+]
+
+[[kv_namespaces]]
+binding = "PIXIV_CACHE"
+id = "df33616a7d21490d91d840f6f731f8da"
+
+[vars]
+PIXIV_USER_ID = "17109509"
+FEED_LIMIT = "20"
+CACHE_TTL = "1800"
+IMAGE_CACHE_TTL = "604800"
+ALLOWED_ORIGIN = "https://www.dongjunto.xyz"
