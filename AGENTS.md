@@ -25,3 +25,16 @@ There is no automated test suite or coverage target. Every change must pass `pnp
 ## Commit & Pull Request Guidelines
 
 Follow the existing Conventional Commit style: `feat:`, `fix:`, `refactor:`, or `build:` followed by a concise imperative summary. Keep generated assets in the same commit as their source changes. Pull requests should explain user-visible behavior, list tested routes and commands, link relevant issues, and include before/after screenshots for layout or animation changes. Update `VITE_THEME_VERSION` in `.env` only when preparing a release build.
+
+## Release Workflow
+
+A versioned change is not complete until its GitHub Release is published. Keep `.env` and `theme.yaml` on the same version, run `pnpm build`, and commit the source plus generated assets. Create the Halo-installable archive from tracked files at the workspace root, then push the commit and matching tag:
+
+```sh
+git archive --format=zip --output ../halo-theme-junto-2.4.21.zip HEAD
+git tag v2.4.21
+git push origin main v2.4.21
+gh release create v2.4.21 ../halo-theme-junto-2.4.21.zip --generate-notes --title "v2.4.21"
+```
+
+Replace the example version for each release. Verify with `gh release view v2.4.21` and confirm the ZIP contains `theme.yaml` at its root. Never overwrite an existing tag or release asset; increment the patch version instead.
