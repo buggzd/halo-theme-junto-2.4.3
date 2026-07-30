@@ -3,6 +3,44 @@ const $ = <T extends Element = HTMLElement>(selector: string, root: ParentNode =
 const $$ = <T extends Element = HTMLElement>(selector: string, root: ParentNode = document) =>
   Array.from(root.querySelectorAll<T>(selector));
 
+const REDUCE_MOTION = matchMedia("(prefers-reduced-motion: reduce)");
+
+/* Text decode — Latin chars cycle through a katakana/symbol pool while CJK
+   glyphs stay put, so mixed titles decode without mojibake. */
+const SCRAMBLE_POOL = "アカサタナハマヤラワガザダバパイウエオ0123456789#%&@/×";
+const CJK_RE = /[⺀-鿿豈-﫿]/;
+
+const scrambleIn = (element: HTMLElement) => {
+  if (REDUCE_MOTION.matches) return;
+  const original = element.dataset.juntoScrambleText || element.textContent || "";
+  element.dataset.juntoScrambleText = original;
+  const chars = Array.from(original);
+  if (chars.length < 2) return;
+  let frame = 0;
+  const total = Math.min(30, 8 + chars.length * 2);
+  const tick = () => {
+    frame += 1;
+    const solved = Math.floor((frame / total) * (chars.length + 4));
+    element.textContent = chars
+      .map((ch, index) => {
+        if (index < solved || /\s/.test(ch) || CJK_RE.test(ch)) return ch;
+        return SCRAMBLE_POOL[(Math.random() * SCRAMBLE_POOL.length) | 0];
+      })
+      .join("");
+    if (frame < total && element.isConnected) requestAnimationFrame(tick);
+    else element.textContent = original;
+  };
+  requestAnimationFrame(tick);
+};
+
+const setupScramble = () => {
+  $$<HTMLElement>("[data-junto-scramble]").forEach((element) => {
+    if (element.dataset.juntoScrambled) return;
+    element.dataset.juntoScrambled = "true";
+    scrambleIn(element);
+  });
+};
+
 const setupGlobalJunto = () => {
   const body = document.body;
   if (body.dataset.juntoGlobalReady) return;
@@ -18,6 +56,7 @@ const setupGlobalJunto = () => {
     if (next <= 0) velocity = 0;
     const capped = Math.max(-36, Math.min(36, velocity));
     document.documentElement.style.setProperty("--sv", capped.toFixed(2));
+    if (!REDUCE_MOTION.matches) body.classList.toggle("junto-tearing", Math.abs(capped) > 26);
     document.documentElement.style.setProperty(
       "--junto-velocity-blur",
       `${Math.min(2.2, Math.abs(capped) * 0.055).toFixed(2)}px`
@@ -140,13 +179,19 @@ const setupGlobalJunto = () => {
     !sessionStorage.getItem("junto-intro-seen")
   ) {
     sessionStorage.setItem("junto-intro-seen", "1");
+    const ransom = (word: string, offset: number) =>
+      `<span class="junto-ransom-line">${Array.from(word)
+        .map((ch, index) => `<i style="--i:${offset + index}">${ch}</i>`)
+        .join("")}</span>`;
     const loader = document.createElement("div");
     loader.className = "junto-loader";
-    loader.innerHTML =
-      '<div><div class="junto-loader-copy"><span>JUNTO</span><span>ARCHIVE</span></div><div class="junto-eyebrow">DEEP BLUE / PERSONAL SIGNAL / HALO</div></div>';
+    loader.innerHTML = `<div><div class="junto-loader-copy">${ransom("JUNTO", 0)}${ransom(
+      "ARCHIVE",
+      5
+    )}</div><div class="junto-eyebrow">DEEP BLUE / PERSONAL SIGNAL / HALO</div></div>`;
     body.prepend(loader);
-    requestAnimationFrame(() => window.setTimeout(() => loader.classList.add("done"), 350));
-    window.setTimeout(() => loader.remove(), 1700);
+    requestAnimationFrame(() => window.setTimeout(() => loader.classList.add("done"), 1000));
+    window.setTimeout(() => loader.remove(), 2200);
   }
 
   if (body.dataset.juntoCursor === "true" && matchMedia("(pointer:fine)").matches) {
@@ -425,6 +470,7 @@ const initJunto = () => {
   setupReveals();
   setupMotionInteractions();
   setupProjects();
+  setupScramble();
 };
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initJunto, { once: true });
