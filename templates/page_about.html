@@ -4,43 +4,116 @@
   th:replace="~{layout :: layout(_title=~{::title}, _header=~{::header}, _content=~{::content})}"
 >
   <th:block th:fragment="title"><th:block th:text="${singlePage.spec.title} + '|' + ${site.title}" /></th:block>
-  <th:block th:fragment="header"
-    ><th:block
-      th:replace="~{macro/page-header :: page-header(extension=${singlePage}, frontCover=${singlePage.spec.cover}, headerTitle=~{::headerTitle})}"
-  /></th:block>
+
+  <th:block th:fragment="header">
+    <th:block
+      th:replace="~{macro/page-header :: page-header(extension=${singlePage}, frontCover=${singlePage.spec.cover}, headerTitle=~{::headerTitle}, id='about', pageSummary='绘画、实时图形、前端视觉与尚未完成的想法，共同组成这份持续更新的个人档案。', pageMetaPrimary='CG ENTHUSIAST', pageMetaSecondary='GAME / ART / CODE', pageMetaTertiary='PROFILE')}"
+    />
+  </th:block>
+
   <th:block th:fragment="headerTitle"
-    ><h1>Junto<br />Studio.</h1></th:block
+    ><h1>Junto<br />Archive.</h1></th:block
   >
+
   <th:block th:fragment="content">
-    <main class="junto-about junto-shell">
-      <section class="junto-about-copy">
-        <span class="junto-eyebrow">ABOUT / PERSON BEHIND THE SIGNAL</span>
-        <h2>Art, code,<br />and all between.</h2>
-        <div class="junto-page-prose" th:utext="${singlePage.content.content}"></div>
+    <main class="junto-about-page">
+      <section class="junto-about junto-shell">
+        <div class="junto-about-copy">
+          <span class="junto-eyebrow">ABOUT / PERSON BEHIND THE SIGNAL</span>
+          <h2>Art, code,<br />and unfinished<br />ideas.</h2>
+          <div class="junto-page-prose" th:utext="${singlePage.content.content}"></div>
+        </div>
+
+        <div class="junto-about-cards">
+          <article>
+            <span class="junto-eyebrow">CURRENT FOCUS</span>
+            <h3>HD-2D<br />Game Art.</h3>
+            <p>角色、场景、动画规范与 Unity 实现。</p>
+          </article>
+          <article>
+            <span class="junto-eyebrow">VISUAL SYSTEM</span>
+            <h3>Blue Ink<br />Editorial.</h3>
+            <p>深蓝油墨、强排版和克制的漫画动势。</p>
+          </article>
+          <article>
+            <span class="junto-eyebrow">OPEN SOURCE</span>
+            <h3>Shaders<br />&amp; Tools.</h3>
+            <p>把视觉实验做成可以分享与复用的项目。</p>
+          </article>
+          <article>
+            <span class="junto-eyebrow">WRITING</span>
+            <h3>Games<br />&amp; Notes.</h3>
+            <p>记录游戏、技术、创作与日常观察。</p>
+          </article>
+        </div>
       </section>
-      <section class="junto-about-cards">
-        <article>
-          <span class="junto-eyebrow">01 / IDENTITY</span>
-          <h3 th:text="${site.title}">JUNTO</h3>
-          <p th:text="${theme.config.junto.studio_label}">CG ARTIST × DEVELOPER</p>
-        </article>
-        <article>
-          <span class="junto-eyebrow">02 / GITHUB</span>
-          <h3>Open<br />Source.</h3>
-          <a th:href="${theme.config.junto.github_url}" target="_blank" rel="noreferrer">VIEW PROFILE ↗</a>
-        </article>
-        <article>
-          <span class="junto-eyebrow">03 / PIXIV</span>
-          <h3>Visual<br />Archive.</h3>
-          <a th:href="${theme.config.junto.pixiv_url}" target="_blank" rel="noreferrer">VIEW WORKS ↗</a>
-        </article>
-        <article>
-          <span class="junto-eyebrow">04 / STATUS</span>
-          <h3>Keep<br />Making.</h3>
-          <p>持续绘画、构建、记录与实验。</p>
-        </article>
+
+      <section class="junto-about-network">
+        <div class="junto-shell">
+          <div class="junto-section-heading junto-about-network-head">
+            <div>
+              <span class="junto-eyebrow">FIND ME ELSEWHERE / DIRECT LINKS</span>
+              <h2>Same signal,<br />different channels.</h2>
+            </div>
+            <p>作品、视频、技术记录与日常碎片，各自在不同的频道继续生长。</p>
+          </div>
+          <div class="junto-about-network-grid">
+            <a
+              th:href="${theme.config.junto.bilibili_url ?: 'https://space.bilibili.com/7576045'}"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <small>01 / VIDEO</small><strong>Bilibili</strong><span>UID 7576045 ↗</span>
+            </a>
+            <a
+              th:href="${theme.config.junto.pixiv_url ?: 'https://www.pixiv.net/users/17109509'}"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <small>02 / ART</small><strong>Pixiv</strong><span>VISUAL ARCHIVE ↗</span>
+            </a>
+            <a
+              th:href="${theme.config.junto.github_url ?: 'https://github.com/buggzd'}"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <small>03 / CODE</small><strong>GitHub</strong><span>@BUGGZD ↗</span>
+            </a>
+            <a
+              th:href="${theme.config.junto.zhihu_url ?: 'https://www.zhihu.com/people/piddong'}"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <small>04 / WRITING</small><strong>知乎</strong><span>@PIDDONG ↗</span>
+            </a>
+            <a
+              th:href="${theme.config.junto.xiaohongshu_url ?: 'https://xhslink.cn/m/5H30n5c1RVC'}"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <small>05 / DAILY</small><strong>小红书</strong><span>FIELD LOG ↗</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="junto-about-now junto-shell">
+        <div class="junto-section-heading">
+          <div>
+            <span class="junto-eyebrow">NOW / RECENT STATE</span>
+            <h2>Currently.</h2>
+          </div>
+          <p>持续画画、构建、记录，也保留一些尚未决定终点的实验。</p>
+        </div>
+        <div class="junto-about-now-list">
+          <div><span>MAKING</span><strong>HD-2D 横版异世界冒险原型</strong></div>
+          <div><span>LEARNING</span><strong>像素动画拆层、Unity 渲染与视觉设计</strong></div>
+          <div><span>PLAYING</span><strong>动作 RPG 与视觉风格强烈的游戏</strong></div>
+          <div><span>STATUS</span><strong>KEEP MAKING / KEEP NOTES</strong></div>
+        </div>
       </section>
     </main>
+
     <th:block
       th:replace="~{module/comment :: comment(group='content.halo.run', kind='SinglePage', name=${singlePage.metadata.name})}"
     />

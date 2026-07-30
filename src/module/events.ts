@@ -93,9 +93,8 @@ export class Events {
       if (backToTopElement) {
         const backToTopOffset = backToTopElement.offsetHeight || 0;
         if (document.documentElement.scrollTop > offset) {
-          backToTopElement.style.top = backToTopOffset > window.innerHeight
-            ? `${window.innerHeight - backToTopOffset - offset}px`
-            : "0";
+          backToTopElement.style.top =
+            backToTopOffset > window.innerHeight ? `${window.innerHeight - backToTopOffset - offset}px` : "0";
         } else {
           backToTopElement.style.top = "-900px";
         }
@@ -371,8 +370,11 @@ export class Events {
   public registerThemeChangeEvent() {
     const themeChangeButtonElements = document.querySelectorAll(".theme-change-js");
     themeChangeButtonElements.forEach((element) => {
+      if ((element as HTMLElement).dataset.juntoThemeBound) return;
+      (element as HTMLElement).dataset.juntoThemeBound = "true";
       element.addEventListener("click", () => {
-        document.querySelector(".skin-menu")?.classList.toggle("show");
+        const bodyElement = document.querySelector("body") as HTMLBodyElement | null;
+        this.setThemeMode(!bodyElement?.classList.contains("dark"), true);
       });
     });
   }
@@ -382,29 +384,45 @@ export class Events {
    */
   @documentFunction(false)
   public registerThemeItemClickEventAndDefaultTheme() {
-    const themeModelElement = document.querySelector(".skin-menu") as HTMLElement;
-    const themeItemElements = themeModelElement?.querySelectorAll(".skin-menu .menu-item");
-    themeItemElements?.forEach((element) => {
-      const themeData: ThemeItemOptions = JSON.parse(element.getAttribute("data-item") || "{}");
-      if (themeData.bg_isdefault) {
-        this.registerThemeRevert(themeData);
+    let storedMode = localStorage.getItem("juntoThemeMode");
+    if (!storedMode) {
+      try {
+        const legacyTheme = JSON.parse(localStorage.getItem("sakuraTheme") || "null") as ThemeItemOptions | null;
+        if (legacyTheme) storedMode = legacyTheme.bg_night ? "dark" : "light";
+      } catch {
+        localStorage.removeItem("sakuraTheme");
       }
-      element.addEventListener("click", () => {
-        this.registerThemeRevert(themeData);
-        localStorage.setItem("sakuraTheme", JSON.stringify(themeData));
-        // 隐藏主题开关
-        themeModelElement?.classList.remove("show");
-        localStorage.setItem("systemMode", "false");
-      });
-    });
+    }
+    if (storedMode === "dark" || storedMode === "light") {
+      this.setThemeMode(storedMode === "dark", false);
+    } else {
+      this.syncThemeToggleState();
+    }
+  }
 
-    WindowEventProxy.addEventListener(
-      "scroll",
-      () => {
-        themeModelElement?.classList.remove("show");
-      },
-      200
-    );
+  private setThemeMode(dark: boolean, persist: boolean) {
+    const bodyElement = document.querySelector("body") as HTMLBodyElement | null;
+    if (!bodyElement) return;
+    bodyElement.classList.toggle("dark", dark);
+    bodyElement.style.backgroundImage = "";
+    bodyElement.style.backgroundSize = "";
+    bodyElement.style.backgroundRepeat = "";
+    if (persist) {
+      localStorage.setItem("juntoThemeMode", dark ? "dark" : "light");
+      localStorage.setItem("systemMode", "false");
+      localStorage.removeItem("sakuraTheme");
+    }
+    this.syncThemeToggleState();
+  }
+
+  private syncThemeToggleState() {
+    const dark = document.body.classList.contains("dark");
+    document.querySelectorAll<HTMLElement>(".theme-change-js").forEach((button) => {
+      button.setAttribute("aria-pressed", String(dark));
+      button.setAttribute("aria-label", dark ? "切换为白天模式" : "切换为黑夜模式");
+      const icon = button.querySelector<HTMLElement>("[data-junto-theme-icon]");
+      icon?.setAttribute("data-icon", dark ? "fa:sun-o" : "fa:moon-o");
+    });
   }
 
   /**
@@ -419,31 +437,7 @@ export class Events {
       }
       themeData = JSON.parse(localThemeData);
     }
-    const bodyElement = document.querySelector("body") as HTMLBodyElement;
-    if (themeData?.bg_url) {
-      bodyElement.style.backgroundImage = `url(${themeData?.bg_url})`;
-    } else {
-      bodyElement.style.backgroundImage = "";
-    }
-    if (themeData?.bg_night) {
-      bodyElement.classList.add("dark");
-    } else {
-      bodyElement.classList.remove("dark");
-    }
-
-    switch (themeData?.bg_img_strategy) {
-      case "cover":
-        bodyElement.style.backgroundSize = "cover";
-        break;
-      case "no-repeat":
-      case "repeat":
-        bodyElement.style.backgroundRepeat = themeData.bg_img_strategy;
-        break;
-      default:
-        bodyElement.style.backgroundSize = "auto";
-        bodyElement.style.backgroundRepeat = "auto";
-        break;
-    }
+    this.setThemeMode(Boolean(themeData?.bg_night), false);
   }
 
   /**
@@ -456,24 +450,15 @@ export class Events {
    */
   @documentFunction(false)
   public registerSystemDarkModeChangeEvent() {
-    const bodyElement = document.querySelector("body") as HTMLBodyElement;
     const systemMode = localStorage.getItem("systemMode");
     const systemDarkMode = window.matchMedia("(prefers-color-scheme: dark)");
 
     if (!systemMode || systemMode === "true") {
-      if (systemDarkMode.matches) {
-        bodyElement.classList.add("dark");
-      } else {
-        bodyElement.classList.remove("dark");
-      }
+      this.setThemeMode(systemDarkMode.matches, false);
     }
 
     window.matchMedia("(prefers-color-scheme: dark)").onchange = (event) => {
-      if (event.matches) {
-        bodyElement.classList.add("dark");
-      } else {
-        bodyElement.classList.remove("dark");
-      }
+      this.setThemeMode(event.matches, false);
       localStorage.setItem("systemMode", "true");
     };
   }

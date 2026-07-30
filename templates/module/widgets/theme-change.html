@@ -1,27 +1,21 @@
 <th:block th:fragment="theme-change">
   <th:block th:if="${theme.config.theme.theme_change}">
-    <div class="change-skin-gear theme-change-js no-select">
-      <div class="keys">
-        <span data-i18n="theme.change_button_text"
-          >&nbsp;
-          <span class="iconify rotating" data-icon="fa:gear"></span>
-        </span>
-      </div>
-    </div>
-    <!-- mobile changeskin -->
-    <button class="mobile-change-skin theme-change-js" aria-label="change theme">
-      <span class="iconify rotating" data-icon="fa:gear" style="top: 0"></span>
+    <button
+      class="change-skin-gear theme-change-js no-select"
+      type="button"
+      aria-label="切换为黑夜模式"
+      aria-pressed="false"
+    >
+      <span class="keys">
+        <span class="junto-theme-mode junto-theme-mode-day"><span class="iconify" data-icon="fa:sun-o"></span>DAY</span>
+        <span class="junto-theme-mode-track" aria-hidden="true"><i></i></span>
+        <span class="junto-theme-mode junto-theme-mode-night"
+          ><span class="iconify" data-icon="fa:moon-o"></span>NIGHT</span
+        >
+      </span>
     </button>
-    <div class="skin-menu no-select">
-      <div class="row-container">
-        <ul class="menu-list">
-          <th:block th:each="themeItem, status : ${theme.config.theme.bg_themes}">
-            <li class="menu-item" th:data-item="${themeItem}">
-              <span class="iconify" th:data-icon="${themeItem.bg_icon}"></span>
-            </li>
-          </th:block>
-        </ul>
-      </div>
-    </div>
+    <button class="mobile-change-skin theme-change-js" type="button" aria-label="切换为黑夜模式" aria-pressed="false">
+      <span class="iconify" data-junto-theme-icon data-icon="fa:moon-o" style="top: 0"></span>
+    </button>
   </th:block>
 </th:block>

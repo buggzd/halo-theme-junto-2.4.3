@@ -2,91 +2,111 @@ import { documentFunction, sakura } from "../main";
 import { HaloApi } from "../utils/haloApi";
 
 export default class Moments {
-  /**
-   * 注册 moment 列表分页加载事件
-   *
-   * @description: Register moment list pagination event
-   * @param {*}
-   * @return {*}
-   */
+  private readonly momentBatchSize = 4;
+  private pendingMomentItems: HTMLElement[] = [];
+  private pendingMomentIndexRows: HTMLElement[] = [];
+  private nextMomentPageUrl = "";
+  private paginationRoot: HTMLElement | null = null;
+
+  /** 每次展开四张纸片；服务器返回更多内容时留待下一次点击。 */
   @documentFunction()
   public registerMomentListPagination() {
-    const paginationElement = document.getElementById("moment-list-pagination");
-    if (!paginationElement) {
-      return;
+    const paginationElement = document.getElementById("moment-list-pagination") as HTMLElement | null;
+    const link = paginationElement?.querySelector<HTMLAnchorElement>("a");
+    if (!paginationElement || !link) return;
+
+    if (this.paginationRoot !== paginationElement) {
+      this.paginationRoot = paginationElement;
+      this.pendingMomentItems = [];
+      this.pendingMomentIndexRows = [];
+      this.nextMomentPageUrl = link.href;
     }
-    const listPaginationLinkElement = paginationElement.querySelector("a");
-    if (!listPaginationLinkElement) {
-      return;
-    }
-    listPaginationLinkElement.addEventListener("click", (event) => {
+    if (link.dataset.juntoPaginationBound) return;
+    link.dataset.juntoPaginationBound = "true";
+
+    link.addEventListener("click", async (event) => {
       event.preventDefault();
-      const momentContainerElement = document.querySelector(".moments-container .moments-inner");
-      if (!momentContainerElement) {
-        return;
+      if (link.classList.contains("loading") || link.getAttribute("aria-disabled") === "true") return;
+      link.classList.add("loading");
+      this.setMomentLoadLabel(link, "正在展开...");
+      try {
+        if (!this.pendingMomentItems.length && this.nextMomentPageUrl) {
+          await this.fetchNextMomentPage(this.nextMomentPageUrl);
+        }
+        this.appendMomentBatch();
+        this.updateMomentLoadCard(paginationElement, link);
+      } catch (error) {
+        console.error(error);
+        this.setMomentLoadLabel(link, "暂时没有展开");
+      } finally {
+        link.classList.remove("loading");
+        if (sakura.$localize) sakura.$localize(".moments-inner");
       }
-      const targetElement = event.target as HTMLLinkElement;
-      const url = targetElement.href;
-      targetElement.classList.add("loading");
-      targetElement.textContent = "";
-      fetch(url, {
-        method: "GET",
-      })
-        .then((response) => response.text())
-        .then((html) => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, "text/html");
-          const momentNewContainerElement = doc.querySelector(".moments-container .moments-inner") as HTMLElement;
-          if (momentNewContainerElement) {
-            this.registerMomentItem(momentNewContainerElement);
-            const momentListNewElements = momentNewContainerElement.querySelectorAll(".moments-item");
-            if (momentListNewElements && momentListNewElements.length > 0) {
-              momentListNewElements.forEach((element) => {
-                momentContainerElement.appendChild(element);
-                // 重新执行 Halo 评论组件初始化
-                const commentScriptElement = element.querySelector(
-                  ".comment-box .comment script:last-of-type"
-                ) as HTMLScriptElement;
-                if (commentScriptElement) {
-                  const code: string =
-                    commentScriptElement.text ||
-                    commentScriptElement.textContent ||
-                    commentScriptElement.innerHTML ||
-                    "";
-                  const parent: ParentNode | null = commentScriptElement.parentNode;
-                  parent?.removeChild(commentScriptElement);
-                  const script: HTMLElementTagNameMap["script"] = document.createElement("script");
-                  script.type = "text/javascript";
-                  script.appendChild(document.createTextNode(code));
-                  parent?.appendChild(script);
-                }
-              });
-            }
-          }
-          const momentIndexElement = document.querySelector("[data-junto-moment-index]");
-          const momentNewIndexElement = doc.querySelector("[data-junto-moment-index]");
-          if (momentIndexElement && momentNewIndexElement) {
-            Array.from(momentNewIndexElement.children).forEach((element) => momentIndexElement.appendChild(element));
-          }
-          this.registerMomentBoard();
-          const nextPaginationElement = doc.querySelector("#moment-list-pagination a") as HTMLLinkElement;
-          if (nextPaginationElement) {
-            targetElement.href = nextPaginationElement.href;
-          } else {
-            paginationElement.innerHTML = "";
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        })
-        .finally(() => {
-          targetElement.classList.remove("loading");
-          targetElement.textContent = sakura.translate("page.moments.loadmore", "加载更多...");
-          if (sakura.$localize) {
-            sakura.$localize(".moments-inner");
-          }
-        });
     });
+  }
+
+  private async fetchNextMomentPage(url: string) {
+    const response = await fetch(url, { method: "GET" });
+    if (!response.ok) throw new Error(`Moments page returned ${response.status}`);
+    const doc = new DOMParser().parseFromString(await response.text(), "text/html");
+    const items = Array.from(doc.querySelectorAll<HTMLElement>("[data-junto-moment-list] > .moments-item"));
+    const indexRows = Array.from(
+      doc.querySelectorAll<HTMLElement>("[data-junto-moment-index] > .junto-notes-index-row")
+    );
+    this.pendingMomentItems.push(...items);
+    this.pendingMomentIndexRows.push(...indexRows);
+    const nextLink = doc.querySelector<HTMLAnchorElement>("#moment-list-pagination a");
+    const nextHref = nextLink?.getAttribute("href");
+    this.nextMomentPageUrl = nextHref ? new URL(nextHref, url).href : "";
+    if (!items.length) this.nextMomentPageUrl = "";
+  }
+
+  private appendMomentBatch() {
+    const list = document.querySelector<HTMLElement>("[data-junto-moment-list]");
+    const index = document.querySelector<HTMLElement>("[data-junto-moment-index]");
+    if (!list) return;
+    const items = this.pendingMomentItems.splice(0, this.momentBatchSize);
+    const indexRows = this.pendingMomentIndexRows.splice(0, items.length);
+    items.forEach((item) => {
+      list.appendChild(item);
+      this.reinitialiseMomentComment(item);
+    });
+    indexRows.forEach((row) => index?.appendChild(row));
+    this.registerMomentItem(list);
+    this.registerMomentBoard();
+  }
+
+  private reinitialiseMomentComment(item: HTMLElement) {
+    const oldScript = item.querySelector<HTMLScriptElement>(".comment-box .comment script:last-of-type");
+    if (!oldScript?.parentNode) return;
+    const code = oldScript.text || oldScript.textContent || oldScript.innerHTML || "";
+    const parent = oldScript.parentNode;
+    parent.removeChild(oldScript);
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.appendChild(document.createTextNode(code));
+    parent.appendChild(script);
+  }
+
+  private updateMomentLoadCard(card: HTMLElement, link: HTMLAnchorElement) {
+    const hasMore = this.pendingMomentItems.length > 0 || Boolean(this.nextMomentPageUrl);
+    card.classList.toggle("is-complete", !hasMore);
+    link.setAttribute("aria-disabled", String(!hasMore));
+    if (hasMore) {
+      link.href = this.nextMomentPageUrl || "#";
+      this.setMomentLoadLabel(
+        link,
+        `再展开 ${Math.min(this.momentBatchSize, this.pendingMomentItems.length || this.momentBatchSize)} 张`
+      );
+    } else {
+      link.removeAttribute("href");
+      this.setMomentLoadLabel(link, "全部纸片已展开");
+    }
+  }
+
+  private setMomentLoadLabel(link: HTMLAnchorElement, label: string) {
+    const labelElement = link.querySelector<HTMLElement>("[data-junto-load-label]");
+    if (labelElement) labelElement.textContent = label;
   }
 
   /**
@@ -172,7 +192,14 @@ export default class Moments {
       );
       rowTop += rowHeight + 130;
     }
-    const canvasHeight = Math.max(1420 + bleed * 2, rowTop + bleed);
+    const loadCard = canvas.querySelector<HTMLElement>("[data-junto-moment-load-card]");
+    let canvasHeight = Math.max(1420 + bleed * 2, rowTop + bleed);
+    if (loadCard) {
+      const loadTop = rowTop + 10;
+      loadCard.style.setProperty("--junto-notes-load-x", `${bleed + 880}px`);
+      loadCard.style.setProperty("--junto-notes-load-y", `${loadTop}px`);
+      canvasHeight = Math.max(canvasHeight, loadTop + Math.max(loadCard.offsetHeight, 270) + bleed);
+    }
     canvas.style.setProperty("--junto-notes-canvas-height", `${canvasHeight}px`);
     canvas.style.setProperty("--junto-notes-stamp-y", `${canvasHeight - bleed - 180}px`);
 

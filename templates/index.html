@@ -11,7 +11,6 @@
           th:text="${theme.config.junto.hero_kicker ?: 'PERSONAL ARCHIVE — HALO / 2026'}"
           >PERSONAL ARCHIVE — HALO / 2026</span
         >
-        <div class="junto-home-stamp" th:text="${theme.config.junto.studio_label}">CG ARTIST × DEVELOPER</div>
         <h1 class="junto-hero-heading">
           <span data-junto-scramble th:text="${site.title}">JUNTO</span
           ><span
@@ -62,6 +61,20 @@
         </p>
       </div>
       <div class="junto-home-route-orbit junto-shell">
+        <svg class="junto-home-route-guide" viewBox="0 0 1240 1080" preserveAspectRatio="none" aria-hidden="true">
+          <path
+            class="junto-home-route-guide-shadow"
+            d="M 370 395 C 505 430 625 500 735 600 C 820 690 610 760 390 870"
+          />
+          <path
+            class="junto-home-route-guide-line"
+            d="M 370 395 C 505 430 625 500 735 600 C 820 690 610 760 390 870"
+            pathLength="1"
+          />
+          <circle cx="370" cy="395" r="6" />
+          <circle cx="735" cy="600" r="6" />
+          <circle cx="390" cy="870" r="6" />
+        </svg>
         <a data-pjax data-junto-depth=".045" th:href="@{/photos}"
           ><th:block th:text="${theme.config.junto.route_works_label ?: 'Works'}">Works</th:block
           ><small th:text="${theme.config.junto.route_works_description ?: '绘画、同人、像素与过程档案'}"

@@ -1245,6 +1245,18 @@ spec:
           name: pixiv_url
           label: Pixiv 链接
           value: https://www.pixiv.net/users/17109509
+        - $formkit: url
+          name: bilibili_url
+          label: 哔哩哔哩链接
+          value: https://space.bilibili.com/7576045
+        - $formkit: url
+          name: zhihu_url
+          label: 知乎链接
+          value: https://www.zhihu.com/people/piddong
+        - $formkit: url
+          name: xiaohongshu_url
+          label: 小红书链接
+          value: https://xhslink.cn/m/5H30n5c1RVC
         - $formkit: checkbox
           name: intro_animation
           label: 首次访问开场动画

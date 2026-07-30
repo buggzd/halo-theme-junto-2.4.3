@@ -43,7 +43,12 @@
           </p>
         </div>
 
-        <div class="junto-notes-wall junto-free-wall" data-junto-drag-board data-junto-drag-align-y="start">
+        <div
+          class="junto-notes-wall junto-free-wall"
+          data-junto-drag-board
+          data-junto-drag-align-y="start"
+          data-junto-drag-wheel="false"
+        >
           <div
             th:if="${moments.total gt 0}"
             class="junto-notes-wall-canvas junto-free-wall-canvas"
@@ -67,22 +72,23 @@
             <span class="junto-notes-wall-stamp" aria-hidden="true"
               >FIELD NOTES<br />PINNED SINCE<br /><b th:text="${#dates.year(#dates.createNow())}">2026</b></span
             >
+            <div
+              th:if="${moments.totalPages gt 1 and moments.hasNext}"
+              id="moment-list-pagination"
+              class="junto-notes-load-card"
+              data-junto-moment-load-card
+            >
+              <a th:href="@{${moments.nextUrl}}" aria-label="再展开四张纸片">
+                <span class="junto-eyebrow">NEXT FOLD / 04 SCRAPS</span>
+                <strong data-junto-load-label>再展开 4 张</strong>
+                <small>CLICK TO UNFOLD →</small>
+              </a>
+            </div>
           </div>
           <div class="junto-notes-empty" th:unless="${moments.total gt 0}">
             <span data-i18n="page.moments.empty">还没有散落在这里的纸片。</span>
           </div>
         </div>
-
-        <th:block th:if="${moments.totalPages gt 1}">
-          <div th:if="${moments.hasNext}" id="moment-list-pagination" class="pagination junto-notes-pagination">
-            <a
-              th:href="@{${moments.nextUrl}}"
-              class="at_button"
-              data-i18n="page.moments.loadmore"
-              aria-label="get the next moment"
-            ></a>
-          </div>
-        </th:block>
       </section>
 
       <section class="junto-notes-index-shell junto-shell" th:if="${moments.total gt 0}">

@@ -400,18 +400,20 @@ const setupMotionInteractions = () => {
       },
       true
     );
-    board.addEventListener(
-      "wheel",
-      (event) => {
-        if (Math.abs(event.deltaX) + Math.abs(event.deltaY) < 2) return;
-        event.preventDefault();
-        x -= event.deltaX * 0.65;
-        y -= event.deltaY * 0.65;
-        clamp();
-        paint();
-      },
-      { passive: false }
-    );
+    if (board.dataset.juntoDragWheel !== "false") {
+      board.addEventListener(
+        "wheel",
+        (event) => {
+          if (Math.abs(event.deltaX) + Math.abs(event.deltaY) < 2) return;
+          event.preventDefault();
+          x -= event.deltaX * 0.65;
+          y -= event.deltaY * 0.65;
+          clamp();
+          paint();
+        },
+        { passive: false }
+      );
+    }
     const alignCanvas = () => {
       const limit = bounds();
       if (board.dataset.juntoDragAlignX === "start") x = limit.x;
