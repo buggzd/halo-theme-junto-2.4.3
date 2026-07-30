@@ -15,6 +15,7 @@ const setupGlobalJunto = () => {
     const next = scrollY;
     velocity += (next - lastScroll - velocity) * 0.28;
     lastScroll = next;
+    if (next <= 0) velocity = 0;
     const capped = Math.max(-36, Math.min(36, velocity));
     document.documentElement.style.setProperty("--sv", capped.toFixed(2));
     document.documentElement.style.setProperty(
