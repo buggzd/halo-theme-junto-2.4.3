@@ -581,15 +581,15 @@ body.junto-theme::before {
   font: 750 10px/1.5 ui-monospace, monospace;
   letter-spacing: 0.1em;
 }
-.junto-home-route-orbit > a:nth-child(1) {
+.junto-home-route-orbit > a:nth-of-type(1) {
   inset: auto;
   transform: none;
 }
-.junto-home-route-orbit > a:nth-child(2) {
+.junto-home-route-orbit > a:nth-of-type(2) {
   inset: auto;
   transform: none;
 }
-.junto-home-route-orbit > a:nth-child(3) {
+.junto-home-route-orbit > a:nth-of-type(3) {
   inset: auto;
   color: transparent;
   -webkit-text-stroke: 2px var(--junto-ink);
@@ -3566,7 +3566,7 @@ body.junto-theme::after {
 }
 .junto-home-route-orbit {
   height: 150svh;
-  margin-top: -18vh;
+  margin-top: -10vh;
   display: block;
 }
 .junto-home-route-orbit > a {
@@ -3599,16 +3599,16 @@ body.junto-theme::after {
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.junto-home-route-orbit > a:nth-child(1) {
+.junto-home-route-orbit > a:nth-of-type(1) {
   top: 46vh;
   left: 2vw;
 }
-.junto-home-route-orbit > a:nth-child(2) {
+.junto-home-route-orbit > a:nth-of-type(2) {
   top: 83vh;
   right: 1vw;
   text-align: right;
 }
-.junto-home-route-orbit > a:nth-child(3) {
+.junto-home-route-orbit > a:nth-of-type(3) {
   top: 121vh;
   left: 18vw;
   border: 0;
@@ -4864,13 +4864,13 @@ body.junto-theme.dark {
     font-size: 16vw;
     transform: none;
   }
-  .junto-home-route-orbit > a:nth-child(1) {
+  .junto-home-route-orbit > a:nth-of-type(1) {
     inset: auto;
   }
-  .junto-home-route-orbit > a:nth-child(2) {
+  .junto-home-route-orbit > a:nth-of-type(2) {
     inset: auto;
   }
-  .junto-home-route-orbit > a:nth-child(3) {
+  .junto-home-route-orbit > a:nth-of-type(3) {
     inset: auto;
     -webkit-text-stroke-width: 1px;
   }
@@ -5112,10 +5112,10 @@ body.junto-theme.dark {
   .junto-home-route-orbit {
     margin-top: -6vh;
   }
-  .junto-home-route-orbit > a:nth-child(2) {
+  .junto-home-route-orbit > a:nth-of-type(2) {
     right: 3vw;
   }
-  .junto-home-route-orbit > a:nth-child(3) {
+  .junto-home-route-orbit > a:nth-of-type(3) {
     left: 8vw;
   }
   .junto-home-project-layout {
@@ -5171,15 +5171,15 @@ body.junto-theme.dark {
     display: block;
     font-size: 17vw;
   }
-  .junto-home-route-orbit > a:nth-child(1) {
+  .junto-home-route-orbit > a:nth-of-type(1) {
     top: 32vh;
     left: 0;
   }
-  .junto-home-route-orbit > a:nth-child(2) {
+  .junto-home-route-orbit > a:nth-of-type(2) {
     top: 64vh;
     right: 0;
   }
-  .junto-home-route-orbit > a:nth-child(3) {
+  .junto-home-route-orbit > a:nth-of-type(3) {
     top: 92vh;
     left: 2vw;
   }
