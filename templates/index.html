@@ -49,7 +49,7 @@
 
   <th:block th:fragment="content">
     <section class="junto-home-routes">
-      <div class="junto-home-route-copy junto-shell">
+      <div class="junto-home-route-copy junto-shell junto-reveal">
         <div>
           <span class="junto-eyebrow" th:text="${theme.config.junto.routes_kicker ?: '00 / THREE ENTRANCES'}"
             >00 / THREE ENTRANCES</span
@@ -61,19 +61,19 @@
         </p>
       </div>
       <div class="junto-home-route-orbit junto-shell">
-        <a data-pjax th:href="@{/photos}"
+        <a data-pjax data-junto-depth=".045" th:href="@{/photos}"
           ><th:block th:text="${theme.config.junto.route_works_label ?: 'Works'}">Works</th:block
           ><small th:text="${theme.config.junto.route_works_description ?: '绘画、同人、像素与过程档案'}"
             >绘画、同人、像素与过程档案</small
           ></a
         >
-        <a data-pjax th:href="@{/categories}"
+        <a data-pjax data-junto-depth="-.035" th:href="@{/categories}"
           ><th:block th:text="${theme.config.junto.route_projects_label ?: 'Projects'}">Projects</th:block
           ><small th:text="${theme.config.junto.route_projects_description ?: '开源工具、Shader 与创作案例'}"
             >开源工具、Shader 与创作案例</small
           ></a
         >
-        <a data-pjax th:href="@{/archives}"
+        <a data-pjax data-junto-depth=".055" th:href="@{/archives}"
           ><th:block th:text="${theme.config.junto.route_notes_label ?: 'Notes'}">Notes</th:block
           ><small th:text="${theme.config.junto.route_notes_description ?: '游戏、技术、读书与个人写作'}"
             >游戏、技术、读书与个人写作</small
@@ -82,8 +82,8 @@
       </div>
     </section>
 
-    <section class="junto-home-works">
-      <div class="junto-home-works-head junto-shell">
+    <section class="junto-home-works junto-home-freewall">
+      <div class="junto-home-works-head junto-shell junto-reveal">
         <div>
           <span class="junto-eyebrow" th:text="${theme.config.junto.works_kicker ?: '01 / SELECTED WORKS'}"
             >01 / SELECTED WORKS</span
@@ -95,29 +95,34 @@
         </p>
       </div>
       <div
-        class="junto-home-work-grid junto-shell fancybox-content"
+        class="junto-free-wall"
+        data-junto-drag-board
         th:if="${pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll())}"
       >
-        <a
-          class="junto-home-work"
-          th:each="photo, stat : ${photoFinder.listAll()}"
-          th:if="${stat.index lt 6}"
-          th:href="${photo.spec.url}"
-          th:title="${photo.spec.displayName}"
-        >
-          <img
-            class="lazyload"
-            th:src="${#strings.isEmpty(photo.spec.cover) ? #theme.assets('/images/load/load.gif') : photo.spec.cover}"
-            th:data-src="${photo.spec.url}"
-            th:alt="${photo.spec.displayName}"
-          />
-          <span
-            ><strong th:text="${photo.spec.displayName}">Untitled</strong
-            ><small th:text="|0${stat.index + 1} / ${theme.config.junto.works_item_label ?: 'VISUAL'}|"
-              >01 / VISUAL</small
-            ></span
+        <div class="junto-free-wall-canvas fancybox-content" data-junto-drag-canvas>
+          <a
+            class="junto-home-work"
+            th:each="photo, stat : ${photoFinder.listAll()}"
+            th:if="${stat.index lt 5}"
+            th:href="${photo.spec.url}"
+            th:title="${photo.spec.displayName}"
           >
-        </a>
+            <div class="junto-home-work-visual">
+              <img
+                class="lazyload"
+                th:src="${#strings.isEmpty(photo.spec.cover) ? #theme.assets('/images/load/load.gif') : photo.spec.cover}"
+                th:data-src="${photo.spec.url}"
+                th:alt="${photo.spec.displayName}"
+              />
+            </div>
+            <span
+              ><strong th:text="${photo.spec.displayName}">Untitled</strong
+              ><small th:text="|0${stat.index + 1} / ${theme.config.junto.works_item_label ?: 'VISUAL'}|"
+                >01 / VISUAL</small
+              ></span
+            >
+          </a>
+        </div>
       </div>
       <div
         class="junto-home-works-empty junto-shell"
@@ -146,7 +151,7 @@
 
     <section class="junto-home-projects">
       <div class="junto-home-project-layout junto-shell">
-        <div class="junto-home-project-copy">
+        <div class="junto-home-project-copy junto-reveal">
           <span class="junto-eyebrow" th:text="${theme.config.junto.projects_kicker ?: '02 / BUILDS & EXPERIMENTS'}"
             >02 / BUILDS & EXPERIMENTS</span
           >
@@ -154,48 +159,47 @@
           <p th:text="${theme.config.junto.projects_description ?: '持续维护的工具、视觉实验与个人项目。'}">
             持续维护的工具、视觉实验与个人项目。
           </p>
+          <a class="junto-primary-button" data-pjax data-junto-magnetic th:href="@{/categories}"
+            >OPEN PROJECT ATLAS →</a
+          >
         </div>
         <div class="junto-home-project-list">
           <a
+            class="junto-reveal"
             th:each="project, stat : ${theme.config.junto.projects}"
             th:href="${project.url}"
             th:target="${#strings.startsWith(project.url, 'http') ? '_blank' : '_self'}"
             rel="noreferrer"
-            ><span th:text="|0${stat.index + 1}|">01</span>
-            <div>
-              <h3 th:text="${project.title}">Project</h3>
-              <p th:text="${project.description}"></p>
-            </div>
-            <small th:text="|${project.tech} →|">DETAIL →</small></a
-          >
+            ><small th:text="|0${stat.index + 1} / ${project.tech}|">01 / DETAIL</small>
+            <h3 th:text="${project.title}">Project</h3>
+            <p th:text="${project.description}"></p
+          ></a>
         </div>
       </div>
     </section>
 
-    <div id="primary" class="junto-index" th:with="postItems=${posts.items}">
-      <div class="junto-index-head">
-        <div>
-          <span class="junto-eyebrow" th:text="${theme.config.junto.posts_kicker ?: '03 / NOTES & FIELD LOGS'}"
-            >03 / NOTES & FIELD LOGS</span
-          >
-          <h1 th:text="${theme.config.junto.posts_title ?: 'Latest Signals.'}">Latest Signals.</h1>
-        </div>
-        <p th:text="${theme.config.junto.posts_description ?: '关于创作、技术、游戏与日常观察的最新记录。'}">
-          关于创作、技术、游戏与日常观察的最新记录。
+    <section id="primary" class="junto-home-editorial" th:with="postItems=${posts.items}">
+      <div class="junto-index-head junto-reveal">
+        <h2 th:text="${theme.config.junto.posts_title ?: 'Loose Signals.'}">Loose Signals.</h2>
+        <p
+          th:text="${theme.config.junto.posts_description ?: '文章入口保持编辑设计的张力，但真正阅读时回到克制、清晰的长文版式。'}"
+        >
+          文章入口保持编辑设计的张力，但真正阅读时回到克制、清晰的长文版式。
         </p>
       </div>
-      <div id="main" class="junto-post-list">
-        <th:block th:if="${posts.totalPages gt 0}">
-          <!--/* Start the Loop */-->
-          <th:block th:each="post, postStat : ${postItems}">
-            <th:block th:replace="~{macro/content :: content(${post}, ${postStat.index + 1})}" />
-          </th:block>
-        </th:block>
-        <th:block th:unless="${posts.total gt 0}">
-          <th:block th:replace="~{macro/content-none}" />
-        </th:block>
+      <div id="main" class="junto-editorial-notes junto-reveal" th:if="${posts.total gt 0}">
+        <a
+          class="junto-editorial-note"
+          data-pjax
+          th:each="post, postStat : ${postItems}"
+          th:if="${postStat.index lt 4}"
+          th:href="@{${post.status.permalink}}"
+        >
+          <small th:text="|NOTE / ${#dates.format(post.spec.publishTime, 'yyyy.MM')}|">NOTE / 2026.07</small>
+          <h3 th:text="${post.spec.title}">Post title</h3>
+        </a>
       </div>
-      <th:block th:replace="~{module/list-pagination :: pagination(${posts})}"></th:block>
-    </div>
+      <th:block th:unless="${posts.total gt 0}"><th:block th:replace="~{macro/content-none}" /></th:block>
+    </section>
   </th:block>
 </html>

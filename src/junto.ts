@@ -8,9 +8,42 @@ const setupGlobalJunto = () => {
   if (body.dataset.juntoGlobalReady) return;
   body.dataset.juntoGlobalReady = "true";
 
-  const updateHeader = () => $(".site-header")?.classList.toggle("is-scrolled", window.scrollY > 24);
-  updateHeader();
-  window.addEventListener("scroll", updateHeader, { passive: true });
+  let lastScroll = scrollY;
+  let velocity = 0;
+  let scrollFrame = 0;
+  const updateMotion = () => {
+    const next = scrollY;
+    velocity += (next - lastScroll - velocity) * 0.28;
+    lastScroll = next;
+    const capped = Math.max(-36, Math.min(36, velocity));
+    document.documentElement.style.setProperty("--sv", capped.toFixed(2));
+    document.documentElement.style.setProperty(
+      "--junto-velocity-blur",
+      `${Math.min(2.2, Math.abs(capped) * 0.055).toFixed(2)}px`
+    );
+    document.documentElement.style.setProperty(
+      "--junto-ink-scale",
+      (1 + Math.min(0.025, Math.abs(capped) * 0.0007)).toFixed(4)
+    );
+    $(".site-header")?.classList.toggle("is-scrolled", next > 36);
+    $$<HTMLElement>("[data-junto-depth]").forEach((element) => {
+      const rect = element.getBoundingClientRect();
+      const depth = Number.parseFloat(element.dataset.juntoDepth || ".08");
+      const offset = (innerHeight / 2 - (rect.top + rect.height / 2)) * depth;
+      element.style.transform = `translate3d(0,${offset}px,0)`;
+    });
+    velocity *= 0.86;
+    scrollFrame = 0;
+    if (Math.abs(velocity) > 0.15) scrollFrame = requestAnimationFrame(updateMotion);
+  };
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!scrollFrame) scrollFrame = requestAnimationFrame(updateMotion);
+    },
+    { passive: true }
+  );
+  updateMotion();
   const updateReadingProgress = () => {
     const progress = $("[data-junto-reading-progress]") as HTMLElement | null;
     const max = document.documentElement.scrollHeight - innerHeight;
@@ -40,12 +73,27 @@ const setupGlobalJunto = () => {
         searchButton.click();
       }
     }
-    if (event.key === "Escape" && document.body.classList.contains("junto-menu-open")) {
-      document.body.classList.remove("junto-menu-open");
-      const menuButton = $("[data-junto-menu]");
-      if (menuButton) menuButton.textContent = "INDEX +";
+    if (event.key === "Escape") {
+      $$(".junto-menu-panel.open,.junto-command-panel.open").forEach((panel) => {
+        panel.classList.remove("open");
+        panel.setAttribute("aria-hidden", "true");
+      });
     }
   });
+
+  const clock = $("[data-junto-clock]");
+  if (clock) {
+    const formatter = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Singapore",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+    const updateClock = () => (clock.textContent = formatter.format(new Date()));
+    updateClock();
+    window.setInterval(updateClock, 1000);
+  }
 
   const playPageWipe = () => {
     const wipe = $(".junto-page-wipe") as HTMLElement | null;
@@ -53,7 +101,7 @@ const setupGlobalJunto = () => {
     wipe.classList.remove("is-active");
     void wipe.offsetWidth;
     wipe.classList.add("is-active");
-    window.setTimeout(() => wipe.classList.remove("is-active"), 950);
+    window.setTimeout(() => wipe.classList.remove("is-active"), 850);
   };
   window.addEventListener("pjax:send", playPageWipe);
 
@@ -126,23 +174,53 @@ const setupGlobalJunto = () => {
       requestAnimationFrame(animate);
     };
     animate();
-    document.addEventListener("pointerover", (event) => {
-      const target = event.target as Element;
-      body.classList.toggle("junto-cursor-hot", Boolean(target.closest("a,button,input,textarea,.junto-art-card")));
+    document.addEventListener("pointermove", (event) => {
+      const target = event.target;
+      body.classList.toggle(
+        "junto-cursor-hot",
+        target instanceof Element && Boolean(target.closest("a,button,input,textarea,.junto-art-card"))
+      );
     });
   }
 };
 
-const setupMenu = () => {
-  const button = $("[data-junto-menu]") as HTMLButtonElement | null;
-  const navbar = $(".junto-header .navbar") as HTMLElement | null;
-  if (!button || button.dataset.bound) return;
-  button.dataset.bound = "true";
-  button.addEventListener("click", () => {
-    const open = document.body.classList.toggle("junto-menu-open");
-    button.textContent = open ? "CLOSE ×" : "INDEX +";
-    navbar?.setAttribute("aria-hidden", String(!open));
-  });
+const setupPanels = () => {
+  const bindPanel = (openSelector: string, closeSelector: string, panelSelector: string, focusSelector?: string) => {
+    const opener = $(openSelector) as HTMLButtonElement | null;
+    const panel = $(panelSelector) as HTMLElement | null;
+    if (!opener || !panel || opener.dataset.bound) return;
+    opener.dataset.bound = "true";
+    const toggle = (open: boolean) => {
+      panel.classList.toggle("open", open);
+      panel.setAttribute("aria-hidden", String(!open));
+      if (open && focusSelector) window.setTimeout(() => $(focusSelector, panel)?.focus(), 60);
+    };
+    opener.addEventListener("click", () => toggle(true));
+    $(closeSelector, panel)?.addEventListener("click", () => toggle(false));
+    panel.addEventListener("click", (event) => {
+      if ((event.target as Element).closest("a")) toggle(false);
+    });
+  };
+  bindPanel("[data-junto-menu]", "[data-junto-menu-close]", "[data-junto-menu-panel]");
+  bindPanel(
+    "[data-junto-command-open]",
+    "[data-junto-command-close]",
+    "[data-junto-command-panel]",
+    "[data-junto-command-input]"
+  );
+
+  const input = $("[data-junto-command-input]") as HTMLInputElement | null;
+  if (input && !input.dataset.bound) {
+    input.dataset.bound = "true";
+    input.addEventListener("input", () => {
+      const query = input.value.trim().toLowerCase();
+      $$(".junto-command-item").forEach((item) => {
+        (item as HTMLElement).hidden = !((item as HTMLElement).dataset.juntoCommandText || "")
+          .toLowerCase()
+          .includes(query);
+      });
+    });
+  }
 };
 
 const setupCurrentNavigation = () => {
@@ -156,7 +234,7 @@ const setupCurrentNavigation = () => {
 
 const setupReveals = () => {
   const items = $$(
-    ".junto-section-heading,.junto-taxonomy-card,.junto-friend-card,.junto-art-card,.junto-project-index > a"
+    ".junto-section-heading,.junto-taxonomy-card,.junto-friend-card,.junto-art-card,.junto-project-index > a,.junto-home-route-copy,.junto-home-works-head,.junto-home-project-copy,.junto-home-project-list > a,.junto-index-head,.junto-index article"
   ).filter((item) => !item.classList.contains("junto-reveal"));
   if (!items.length) return;
   const observer = new IntersectionObserver(
@@ -169,6 +247,116 @@ const setupReveals = () => {
   items.forEach((item) => {
     item.classList.add("junto-reveal");
     observer.observe(item);
+  });
+};
+
+const setupMotionInteractions = () => {
+  $$<HTMLElement>("[data-junto-magnetic],.junto-search-button,.junto-menu-toggle").forEach((element) => {
+    if (element.dataset.juntoMagneticBound) return;
+    element.dataset.juntoMagneticBound = "true";
+    element.addEventListener("pointermove", (event) => {
+      const rect = element.getBoundingClientRect();
+      const dx = (event.clientX - rect.left - rect.width / 2) * 0.16;
+      const dy = (event.clientY - rect.top - rect.height / 2) * 0.16;
+      element.style.transform = `translate(${dx}px,${dy}px)`;
+    });
+    element.addEventListener("pointerleave", () => (element.style.transform = ""));
+  });
+
+  $$<HTMLElement>("[data-junto-drag-board]").forEach((board) => {
+    if (board.dataset.juntoDragBound) return;
+    const canvas = $("[data-junto-drag-canvas]", board) as HTMLElement | null;
+    if (!canvas) return;
+    board.dataset.juntoDragBound = "true";
+    let x = 0,
+      y = 0,
+      velocityX = 0,
+      velocityY = 0,
+      startX = 0,
+      startY = 0,
+      baseX = 0,
+      baseY = 0,
+      dragging = false,
+      moved = false,
+      animation = 0;
+    const clamp = () => {
+      const boardRect = board.getBoundingClientRect();
+      const canvasRect = canvas.getBoundingClientRect();
+      const boundX = Math.max(80, (canvasRect.width - boardRect.width) / 2);
+      const boundY = Math.max(60, (canvasRect.height - boardRect.height) / 2);
+      x = Math.max(-boundX, Math.min(boundX, x));
+      y = Math.max(-boundY, Math.min(boundY, y));
+    };
+    const paint = () => {
+      canvas.style.setProperty("--junto-drag-x", `${x}px`);
+      canvas.style.setProperty("--junto-drag-y", `${y}px`);
+    };
+    const inertia = () => {
+      velocityX *= 0.92;
+      velocityY *= 0.92;
+      x += velocityX;
+      y += velocityY;
+      clamp();
+      paint();
+      if (Math.abs(velocityX) + Math.abs(velocityY) > 0.2) animation = requestAnimationFrame(inertia);
+    };
+    board.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) return;
+      cancelAnimationFrame(animation);
+      dragging = true;
+      moved = false;
+      startX = event.clientX;
+      startY = event.clientY;
+      baseX = x;
+      baseY = y;
+      velocityX = velocityY = 0;
+      board.classList.add("dragging");
+      board.setPointerCapture(event.pointerId);
+    });
+    board.addEventListener("pointermove", (event) => {
+      if (!dragging) return;
+      const nextX = baseX + event.clientX - startX;
+      const nextY = baseY + event.clientY - startY;
+      velocityX = nextX - x;
+      velocityY = nextY - y;
+      x = nextX;
+      y = nextY;
+      moved ||= Math.hypot(event.clientX - startX, event.clientY - startY) > 7;
+      clamp();
+      paint();
+    });
+    const end = (event: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      board.classList.remove("dragging");
+      if (board.hasPointerCapture(event.pointerId)) board.releasePointerCapture(event.pointerId);
+      animation = requestAnimationFrame(inertia);
+    };
+    board.addEventListener("pointerup", end);
+    board.addEventListener("pointercancel", end);
+    board.addEventListener(
+      "click",
+      (event) => {
+        if (!moved) return;
+        event.preventDefault();
+        event.stopPropagation();
+        moved = false;
+      },
+      true
+    );
+    board.addEventListener(
+      "wheel",
+      (event) => {
+        if (Math.abs(event.deltaX) + Math.abs(event.deltaY) < 2) return;
+        event.preventDefault();
+        x -= event.deltaX * 0.65;
+        y -= event.deltaY * 0.65;
+        clamp();
+        paint();
+      },
+      { passive: false }
+    );
+    paint();
   });
 };
 
@@ -231,9 +419,10 @@ const setupProjects = () => {
 
 const initJunto = () => {
   setupGlobalJunto();
-  setupMenu();
+  setupPanels();
   setupCurrentNavigation();
   setupReveals();
+  setupMotionInteractions();
   setupProjects();
 };
 

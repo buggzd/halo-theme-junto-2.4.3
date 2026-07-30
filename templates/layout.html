@@ -21,9 +21,70 @@
     th:classappend="| template-${_templateId}|"
     th:attr="data-junto-intro=${theme.config.junto.intro_animation},data-junto-cursor=${theme.config.junto.custom_cursor}"
   >
-    <div class="junto-page-wipe" aria-hidden="true">
-      <span class="junto-page-wipe-code">JUNTO / TRANSIT</span>
-      <span class="junto-page-wipe-mark">J</span>
+    <div class="junto-page-wipe" aria-hidden="true"></div>
+
+    <div class="junto-menu-panel" data-junto-menu-panel aria-hidden="true">
+      <div class="junto-panel-top">
+        <b>JUNTO / SITE INDEX</b><button type="button" class="junto-close-button" data-junto-menu-close>CLOSE ×</button>
+      </div>
+      <div class="junto-menu-grid" th:with="menu = ${menuFinder.getPrimary()}">
+        <nav class="junto-menu-main">
+          <a
+            data-pjax
+            th:each="menuItem : ${menu.menuItems}"
+            th:href="@{${menuItem.status?.href}}"
+            th:target="${menuItem.spec.target?.value}"
+            th:text="${menuItem.status.displayName}"
+            >HOME</a
+          >
+        </nav>
+        <aside class="junto-menu-side">
+          <a data-pjax th:href="@{/about}">ABOUT / 关于</a>
+          <a data-pjax th:href="@{/links}">FRIENDS / 友人帐</a>
+          <a data-pjax th:href="@{/moments}">MOMENTS / 瞬间</a>
+          <a data-pjax th:href="@{/archives}">ARCHIVE / 归档</a>
+          <a data-pjax th:href="@{/search}">SEARCH / 搜索</a>
+          <small>动态读取 Halo 主导航；次要入口收纳在此，保持页面呼吸感。</small>
+        </aside>
+      </div>
+    </div>
+
+    <div
+      class="junto-command-panel"
+      data-junto-command-panel
+      aria-hidden="true"
+      th:if="${theme.config.general.top_search and pluginFinder.available('PluginSearchWidget')}"
+    >
+      <div class="junto-panel-top">
+        <b>QUICK ACCESS / 快速导航</b
+        ><button type="button" class="junto-close-button" data-junto-command-close>CLOSE ×</button>
+      </div>
+      <div class="junto-command-box" th:with="menu = ${menuFinder.getPrimary()}">
+        <form method="get" th:action="@{/search}" role="search">
+          <input
+            class="junto-command-search"
+            data-junto-command-input
+            type="search"
+            name="keyword"
+            placeholder="搜索文章、项目或页面…"
+            autocomplete="off"
+            required
+          />
+        </form>
+        <div class="junto-command-list">
+          <a
+            class="junto-command-item"
+            data-pjax
+            th:each="menuItem, stat : ${menu.menuItems}"
+            th:href="@{${menuItem.status?.href}}"
+            th:data-junto-command-text="${menuItem.status.displayName}"
+          >
+            <span th:text="${stat.index lt 9 ? '0' + (stat.index + 1) : stat.index + 1}">01</span>
+            <span><b th:text="${menuItem.status.displayName}">HOME</b><br /><small>HALO NAVIGATION</small></span>
+            <span>PAGE</span>
+          </a>
+        </div>
+      </div>
     </div>
 
     <div class="pjax">

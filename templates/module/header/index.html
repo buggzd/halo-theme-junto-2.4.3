@@ -8,11 +8,13 @@
     <div class="junto-tools">
       <button
         th:if="${theme.config.general.top_search and pluginFinder.available('PluginSearchWidget')}"
-        class="junto-search-button js-togger-search"
+        class="junto-search-button"
         type="button"
+        data-junto-command-open
       >
         SEARCH ⌘K
       </button>
+      <span class="junto-clock">SGT <b data-junto-clock>00:00:00</b></span>
       <button class="junto-menu-toggle" type="button" data-junto-menu>INDEX +</button>
     </div>
   </div>
