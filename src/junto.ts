@@ -3,6 +3,44 @@ const $ = <T extends Element = HTMLElement>(selector: string, root: ParentNode =
 const $$ = <T extends Element = HTMLElement>(selector: string, root: ParentNode = document) =>
   Array.from(root.querySelectorAll<T>(selector));
 
+const REDUCE_MOTION = matchMedia("(prefers-reduced-motion: reduce)");
+
+/* Text decode — Latin chars cycle through a katakana/symbol pool while CJK
+   glyphs stay put, so mixed titles decode without mojibake. */
+const SCRAMBLE_POOL = "アカサタナハマヤラワガザダバパイウエオ0123456789#%&@/×";
+const CJK_RE = /[⺀-鿿豈-﫿]/;
+
+const scrambleIn = (element: HTMLElement) => {
+  if (REDUCE_MOTION.matches) return;
+  const original = element.dataset.juntoScrambleText || element.textContent || "";
+  element.dataset.juntoScrambleText = original;
+  const chars = Array.from(original);
+  if (chars.length < 2) return;
+  let frame = 0;
+  const total = Math.min(30, 8 + chars.length * 2);
+  const tick = () => {
+    frame += 1;
+    const solved = Math.floor((frame / total) * (chars.length + 4));
+    element.textContent = chars
+      .map((ch, index) => {
+        if (index < solved || /\s/.test(ch) || CJK_RE.test(ch)) return ch;
+        return SCRAMBLE_POOL[(Math.random() * SCRAMBLE_POOL.length) | 0];
+      })
+      .join("");
+    if (frame < total && element.isConnected) requestAnimationFrame(tick);
+    else element.textContent = original;
+  };
+  requestAnimationFrame(tick);
+};
+
+const setupScramble = () => {
+  $$<HTMLElement>("[data-junto-scramble]").forEach((element) => {
+    if (element.dataset.juntoScrambled) return;
+    element.dataset.juntoScrambled = "true";
+    scrambleIn(element);
+  });
+};
+
 const setupGlobalJunto = () => {
   const body = document.body;
   if (body.dataset.juntoGlobalReady) return;
@@ -18,6 +56,7 @@ const setupGlobalJunto = () => {
     if (next <= 0) velocity = 0;
     const capped = Math.max(-36, Math.min(36, velocity));
     document.documentElement.style.setProperty("--sv", capped.toFixed(2));
+    if (!REDUCE_MOTION.matches) body.classList.toggle("junto-tearing", Math.abs(capped) > 26);
     document.documentElement.style.setProperty(
       "--junto-velocity-blur",
       `${Math.min(2.2, Math.abs(capped) * 0.055).toFixed(2)}px`
@@ -140,13 +179,19 @@ const setupGlobalJunto = () => {
     !sessionStorage.getItem("junto-intro-seen")
   ) {
     sessionStorage.setItem("junto-intro-seen", "1");
+    const ransom = (word: string, offset: number) =>
+      `<span class="junto-ransom-line">${Array.from(word)
+        .map((ch, index) => `<i style="--i:${offset + index}">${ch}</i>`)
+        .join("")}</span>`;
     const loader = document.createElement("div");
     loader.className = "junto-loader";
-    loader.innerHTML =
-      '<div><div class="junto-loader-copy"><span>JUNTO</span><span>ARCHIVE</span></div><div class="junto-eyebrow">DEEP BLUE / PERSONAL SIGNAL / HALO</div></div>';
+    loader.innerHTML = `<div><div class="junto-loader-copy">${ransom("JUNTO", 0)}${ransom(
+      "ARCHIVE",
+      5
+    )}</div><div class="junto-eyebrow">DEEP BLUE / PERSONAL SIGNAL / HALO</div></div>`;
     body.prepend(loader);
-    requestAnimationFrame(() => window.setTimeout(() => loader.classList.add("done"), 350));
-    window.setTimeout(() => loader.remove(), 1700);
+    requestAnimationFrame(() => window.setTimeout(() => loader.classList.add("done"), 1000));
+    window.setTimeout(() => loader.remove(), 2200);
   }
 
   if (body.dataset.juntoCursor === "true" && matchMedia("(pointer:fine)").matches) {
@@ -418,6 +463,146 @@ const setupProjects = () => {
     });
 };
 
+/* Julia set hero core. Renders into a low-res offscreen canvas and upscales
+   for a painterly read; the c parameter drifts on a slow orbit steered by
+   the pointer. Light themes blend by multiply (paper-tone edges vanish),
+   dark theme flips the palette and blends by screen. */
+const setupFractal = () => {
+  const canvas = $("[data-junto-fractal]") as HTMLCanvasElement | null;
+  if (!canvas || canvas.dataset.juntoFractalBound) return;
+  canvas.dataset.juntoFractalBound = "true";
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const SCALE = 0.24;
+  const ITERATIONS = 30;
+  const off = document.createElement("canvas");
+  const octx = off.getContext("2d");
+  if (!octx) return;
+
+  let visible = true;
+  let frame = 0;
+  let mouseX = 0;
+  let mouseY = 0;
+  let targetX = 0;
+  let targetY = 0;
+  let paletteDark = false;
+  const palette = new Uint8ClampedArray(256 * 3);
+
+  const buildPalette = (dark: boolean) => {
+    paletteDark = dark;
+    const stops = dark
+      ? [
+          [2, 9, 20],
+          [10, 49, 95],
+          [46, 155, 255],
+          [223, 242, 255],
+        ]
+      : [
+          [245, 248, 251],
+          [185, 218, 232],
+          [23, 99, 154],
+          [6, 26, 54],
+        ];
+    for (let i = 0; i < 256; i++) {
+      const t = (i / 255) * (stops.length - 1);
+      const stage = Math.min(stops.length - 2, Math.floor(t));
+      const f = t - stage;
+      for (let ch = 0; ch < 3; ch++) {
+        palette[i * 3 + ch] = stops[stage][ch] + (stops[stage + 1][ch] - stops[stage][ch]) * f;
+      }
+    }
+  };
+
+  const resize = () => {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.round(rect.width));
+    canvas.height = Math.max(1, Math.round(rect.height));
+    off.width = Math.max(1, Math.round(rect.width * SCALE));
+    off.height = Math.max(1, Math.round(rect.height * SCALE));
+  };
+  resize();
+  new ResizeObserver(resize).observe(canvas);
+  new IntersectionObserver((entries) => (visible = entries[0]?.isIntersecting ?? true)).observe(canvas);
+  window.addEventListener(
+    "pointermove",
+    (event) => {
+      targetX = (event.clientX / innerWidth) * 2 - 1;
+      targetY = (event.clientY / innerHeight) * 2 - 1;
+    },
+    { passive: true }
+  );
+
+  const render = (time: number) => {
+    const dark = document.body.classList.contains("dark");
+    if (dark !== paletteDark) buildPalette(dark);
+    const w = off.width;
+    const h = off.height;
+    const image = octx.createImageData(w, h);
+    const data = image.data;
+    mouseX += (targetX - mouseX) * 0.04;
+    mouseY += (targetY - mouseY) * 0.04;
+    const t = time * 0.00006;
+    const cx = -0.76 + Math.cos(t * 2.1) * 0.045 + mouseX * 0.055;
+    const cy = 0.168 + Math.sin(t * 1.7) * 0.045 + mouseY * 0.055;
+    const zoom = 1.55;
+    const aspect = w / h;
+    let p = 0;
+    for (let y = 0; y < h; y++) {
+      const zy0 = (y / h - 0.5) * 2 * zoom;
+      for (let x = 0; x < w; x++) {
+        let zx = (x / w - 0.5) * 2 * zoom * aspect;
+        let zy = zy0;
+        let n = 0;
+        while (n < ITERATIONS && zx * zx + zy * zy < 4) {
+          const xt = zx * zx - zy * zy + cx;
+          zy = 2 * zx * zy + cy;
+          zx = xt;
+          n += 1;
+        }
+        let v = 0;
+        if (n < ITERATIONS) {
+          const logZn = Math.max(1e-9, Math.log(zx * zx + zy * zy) * 0.5);
+          v = Math.max(0, (n + 1 - Math.log2(logZn)) / ITERATIONS);
+        }
+        const shade = Math.min(255, (v * 255 * 1.6) | 0);
+        data[p] = palette[shade * 3];
+        data[p + 1] = palette[shade * 3 + 1];
+        data[p + 2] = palette[shade * 3 + 2];
+        data[p + 3] = 255;
+        p += 4;
+      }
+    }
+    octx.putImageData(image, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(off, 0, 0, canvas.width, canvas.height);
+  };
+
+  if (REDUCE_MOTION.matches) {
+    buildPalette(document.body.classList.contains("dark"));
+    render(4200);
+    document.body.classList.add("junto-fractal-on");
+    return;
+  }
+
+  let started = false;
+  const step = (time: number) => {
+    if (!canvas.isConnected) return;
+    if (visible && !document.hidden) {
+      frame += 1;
+      if (frame % 2 === 0) {
+        render(time);
+        if (!started) {
+          started = true;
+          document.body.classList.add("junto-fractal-on");
+        }
+      }
+    }
+    requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+};
+
 const initJunto = () => {
   setupGlobalJunto();
   setupPanels();
@@ -425,6 +610,8 @@ const initJunto = () => {
   setupReveals();
   setupMotionInteractions();
   setupProjects();
+  setupScramble();
+  setupFractal();
 };
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initJunto, { once: true });

@@ -5,6 +5,7 @@
 >
   <th:block th:fragment="header">
     <section class="junto-home-hero">
+      <canvas class="junto-fractal" data-junto-fractal aria-hidden="true"></canvas>
       <div class="junto-home-inner">
         <span
           class="junto-home-label junto-eyebrow"
@@ -13,10 +14,11 @@
         >
         <div class="junto-home-stamp" th:text="${theme.config.junto.studio_label}">CG ARTIST × DEVELOPER</div>
         <h1 class="junto-hero-heading">
-          <span th:text="${site.title}">JUNTO</span
+          <span data-junto-scramble th:text="${site.title}">JUNTO</span
           ><span
             class="stroke"
             data-text="STUDIO"
+            data-junto-scramble
             th:attr="data-text=${theme.config.junto.hero_outline_text ?: 'STUDIO'}"
             th:text="${theme.config.junto.hero_outline_text ?: 'STUDIO'}"
             >STUDIO</span

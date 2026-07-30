@@ -4,6 +4,7 @@
   --junto-ink: #061a36;
   --junto-blue: #17639a;
   --junto-ice: #dff2ff;
+  --junto-volt: #2e9bff;
   --junto-muted: #60738a;
   --junto-line: rgba(6, 26, 54, 0.22);
   --junto-card: rgba(255, 255, 255, 0.48);
@@ -15,6 +16,13 @@
   --junto-note-green: #dff5d0;
   --junto-content: min(1600px, calc(100vw - 42px));
   --junto-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --junto-spring: cubic-bezier(0.2, 1.35, 0.42, 1);
+  --junto-font-display: "Anton", "Archivo Black", "Arial Narrow Bold", ui-sans-serif, sans-serif;
+  --junto-font-ui: "Space Grotesk", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  --junto-slash: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+  --junto-slash-sm: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px));
+  --junto-starburst: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23000'%3E%3Crect x='16' y='16' width='68' height='68'/%3E%3Crect x='16' y='16' width='68' height='68' transform='rotate(22.5 50 50)'/%3E%3Crect x='16' y='16' width='68' height='68' transform='rotate(45 50 50)'/%3E%3Crect x='16' y='16' width='68' height='68' transform='rotate(67.5 50 50)'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 html {
@@ -25,8 +33,7 @@ body.junto-theme {
   margin: 0;
   color: var(--junto-ink);
   background: var(--junto-paper);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-    "Microsoft YaHei", sans-serif;
+  font-family: var(--junto-font-ui);
   overflow-x: hidden;
 }
 body.junto-theme::before {
@@ -1257,17 +1264,55 @@ body.junto-theme::before {
   -webkit-text-stroke: 1.5px white;
 }
 
-/* Route transition */
+/* Route transition — three jagged layers: volt leads, ice mid, ink on top */
 .junto-page-wipe {
   position: fixed;
   inset: 0;
   z-index: 18000;
   pointer-events: none;
-  background: var(--junto-ink);
-  clip-path: circle(0 at 100% 0);
+  background: var(--junto-volt);
+  clip-path: polygon(
+    0 0,
+    0 0,
+    0 8%,
+    0 16%,
+    0 24%,
+    0 32%,
+    0 40%,
+    0 48%,
+    0 56%,
+    0 64%,
+    0 72%,
+    0 80%,
+    0 88%,
+    0 96%,
+    0 100%,
+    0 100%
+  );
 }
-.junto-page-wipe.is-active {
-  animation: junto-page-wipe 0.78s var(--junto-ease) both;
+.junto-page-wipe::before,
+.junto-page-wipe::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: inherit;
+}
+.junto-page-wipe::before {
+  background: var(--junto-ice);
+}
+.junto-page-wipe::after {
+  background: var(--junto-ink);
+}
+.junto-page-wipe.is-active,
+.junto-page-wipe.is-active::before,
+.junto-page-wipe.is-active::after {
+  animation: junto-wipe-zig 0.62s var(--junto-ease) both;
+}
+.junto-page-wipe.is-active::before {
+  animation-delay: 0.07s;
+}
+.junto-page-wipe.is-active::after {
+  animation-delay: 0.14s;
 }
 
 /* P5R-inspired deep-blue return lever */
@@ -3096,17 +3141,6 @@ body.junto-theme.dark::before {
     transform: translateX(-50%);
   }
 }
-@keyframes junto-page-wipe {
-  0% {
-    clip-path: circle(0 at 100% 0);
-  }
-  55% {
-    clip-path: circle(145% at 100% 0);
-  }
-  100% {
-    clip-path: circle(0 at 0 100%);
-  }
-}
 @keyframes junto-lever-pull {
   0%,
   100% {
@@ -3122,6 +3156,492 @@ body.junto-theme.dark::before {
 @keyframes junto-mobile-top-pull {
   35% {
     transform: translateY(5px) rotate(4deg) scale(0.92);
+  }
+}
+
+/* ============================================================
+   Phantom graphic layer — P5R language in ink / paper / ice /
+   volt. Slashed panels, halftone, sticker tape, starburst
+   badges, glitch events and the fractal hero core.
+   ============================================================ */
+
+/* Real display type. Anton carries Latin; font-synthesis:none keeps
+   it clean while CJK glyphs fall through to a true bold face. */
+.junto-hero-heading,
+.junto-page-heading,
+.junto-section-heading h2,
+.junto-home-route-copy h2,
+.junto-home-works-head h2,
+.junto-home-project-copy h2,
+.junto-index-head h2,
+.junto-footer-title,
+.junto-loader-copy,
+.junto-error-code,
+.junto-error h1,
+.junto-signal-track span,
+.junto-home-route-orbit > a,
+.junto-home-project-list h3,
+.junto-editorial-note h3,
+.junto-project-head h2,
+.junto-project-preview h3,
+.junto-project-index h3,
+.junto-repo-row h3,
+.junto-gallery-intro h2,
+.junto-taxonomy-card h2,
+.junto-friend-card h2,
+.junto-article-title,
+.junto-post-row h2 {
+  font-family: var(--junto-font-display);
+  font-weight: 700;
+  font-synthesis: none;
+  letter-spacing: -0.01em;
+}
+
+/* Eyebrow brand tick */
+.junto-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 0.62em;
+  height: 0.62em;
+  margin-right: 0.75em;
+  background: var(--junto-volt);
+  clip-path: polygon(0 0, 100% 0, 100% 62%, 62% 100%, 0 100%);
+}
+
+/* Slash-cut chrome */
+.junto-primary-button,
+.junto-search-button,
+.junto-menu-toggle,
+.junto-close-button,
+.junto-gallery-tools li span {
+  clip-path: var(--junto-slash-sm);
+}
+.junto-taxonomy-card,
+.junto-editorial-note {
+  clip-path: var(--junto-slash);
+}
+
+/* Halftone dot fields */
+.junto-home-works,
+.junto-project-atlas,
+.junto-gallery-shell,
+.junto-theme > .site-footer,
+.junto-loader,
+.junto-error {
+  background-image: radial-gradient(rgba(223, 242, 255, 0.12) 1px, transparent 1.5px);
+  background-size: 15px 15px;
+}
+.junto-home-editorial {
+  background-image: radial-gradient(rgba(6, 26, 54, 0.06) 1px, transparent 1.5px);
+  background-size: 17px 17px;
+}
+
+/* Starburst badge replaces the plain circle stamp */
+.junto-home-stamp {
+  padding: 24px 20px;
+  color: var(--junto-ice);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  backdrop-filter: none;
+  isolation: isolate;
+}
+.junto-home-stamp::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--junto-ink);
+  -webkit-mask: var(--junto-starburst) center / contain no-repeat;
+  mask: var(--junto-starburst) center / contain no-repeat;
+  animation: junto-spin-slow 22s linear infinite;
+}
+.junto-theme.dark .junto-home-stamp {
+  color: var(--junto-paper);
+}
+
+/* Sticker cards: hard offset shadow + tape strip */
+.junto-theme .junto-free-wall .junto-home-work {
+  box-shadow: 12px 14px 0 rgba(6, 26, 54, 0.18);
+}
+.junto-theme .junto-free-wall .junto-home-work:hover {
+  box-shadow: 16px 18px 0 rgba(6, 26, 54, 0.26);
+}
+.junto-theme .junto-free-wall .junto-home-work::before,
+.junto-art-card::before {
+  content: "";
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  z-index: 4;
+  width: 104px;
+  height: 28px;
+  transform: translateX(-50%) rotate(-2.5deg);
+  background: linear-gradient(100deg, rgba(223, 242, 255, 0.88), rgba(223, 242, 255, 0.55));
+  clip-path: polygon(3% 0, 97% 4%, 100% 88%, 95% 100%, 4% 96%, 0 12%);
+  box-shadow: 0 3px 8px rgba(6, 26, 54, 0.14);
+  pointer-events: none;
+}
+.junto-art-card {
+  box-shadow: 10px 12px 0 rgba(6, 26, 54, 0.16);
+}
+.junto-art-card::before {
+  width: 88px;
+  height: 24px;
+  transform: translateX(-50%) rotate(2deg);
+}
+.junto-home-work-visual img {
+  transition: transform 0.3s var(--junto-ease), filter 0.3s var(--junto-ease);
+}
+
+/* Glitch pulse — the hero outline stutters every few seconds */
+.junto-hero-heading .stroke {
+  animation: junto-glitch-skew 7s steps(1) 1.8s infinite;
+}
+.junto-hero-heading .stroke::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: var(--junto-volt);
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+  pointer-events: none;
+  animation: junto-glitch-pulse 7s steps(1) 1.8s infinite;
+}
+.junto-hero-heading .stroke::after {
+  animation: junto-glitch-fill 7s steps(1) 1.8s infinite;
+}
+
+/* Hover micro-glitch */
+.junto-menu-main a:hover,
+.junto-home-route-orbit > a:hover,
+.junto-project-index > a:hover h3,
+.junto-post-row:hover h2,
+.junto-search-result > a:hover h3 {
+  animation: junto-micro-glitch 0.28s steps(2) 1;
+}
+
+/* Velocity tear — fast scrolling destabilises the media signal */
+body.junto-tearing .junto-home-work-visual img,
+body.junto-tearing .junto-art-card .gallery-icon img,
+body.junto-tearing .junto-moments .moment-medium img {
+  transform: translateX(calc(var(--sv, 0) * -0.16px)) skewX(calc(var(--sv, 0) * 0.05deg));
+  filter: saturate(1.5) contrast(1.06);
+}
+
+/* Ransom-note loader letters */
+.junto-loader-copy {
+  display: block;
+  letter-spacing: 0;
+}
+.junto-loader-copy .junto-ransom-line {
+  display: block;
+}
+.junto-loader-copy .junto-ransom-line:last-child {
+  margin-left: 8vw;
+  margin-top: 0.1em;
+  color: inherit;
+  -webkit-text-stroke: 0;
+}
+.junto-loader-copy i {
+  display: inline-block;
+  padding: 0.01em 0.09em 0.04em;
+  margin: 0 0.025em;
+  color: var(--junto-ink);
+  font-style: normal;
+  background: var(--junto-paper);
+  transform: rotate(var(--rr, 0deg)) translateY(var(--ry, 0));
+  animation: junto-ransom-in 0.55s var(--junto-spring) both;
+  animation-delay: calc(var(--i) * 45ms);
+}
+.junto-loader-copy i:nth-child(3n) {
+  --rr: -2.6deg;
+  background: var(--junto-ice);
+}
+.junto-loader-copy i:nth-child(4n) {
+  --rr: 2.2deg;
+  --ry: 0.03em;
+  color: white;
+  background: var(--junto-volt);
+}
+.junto-loader-copy i:nth-child(5n) {
+  --rr: -1.4deg;
+  --ry: -0.025em;
+}
+.junto-loader-copy i:nth-child(7n) {
+  --rr: 3deg;
+  background: var(--junto-paper-2);
+}
+
+/* Fractal hero core — Julia set replaces the conic blob once live */
+.junto-fractal {
+  position: absolute;
+  left: 52%;
+  top: 49%;
+  width: min(72vw, 1060px);
+  aspect-ratio: 1 / 1.08;
+  transform: translate(-50%, -50%) rotate(-4deg);
+  mix-blend-mode: multiply;
+  opacity: 0;
+  transition: opacity 1.2s var(--junto-ease);
+  pointer-events: none;
+}
+.junto-home-hero::before {
+  transition: opacity 0.8s var(--junto-ease);
+}
+body.junto-fractal-on .junto-fractal {
+  opacity: 0.92;
+}
+body.junto-fractal-on .junto-home-hero::before {
+  opacity: 0;
+}
+.junto-theme.dark .junto-fractal {
+  mix-blend-mode: screen;
+}
+
+/* 404 — full glitch showpiece */
+.junto-error {
+  background-image: repeating-linear-gradient(0deg, rgba(223, 242, 255, 0.045) 0 1px, transparent 1px 4px),
+    radial-gradient(rgba(223, 242, 255, 0.12) 1px, transparent 1.5px);
+  background-size: auto, 15px 15px;
+}
+.junto-error-code::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: var(--junto-volt);
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+  animation: junto-error-glitch 2.6s steps(1) infinite;
+}
+.junto-error-code::after {
+  content: attr(data-text);
+  animation: junto-error-fill 2.6s steps(1) infinite;
+}
+.junto-error-actions a:first-child {
+  color: white;
+  background: var(--junto-volt);
+  border-color: var(--junto-volt);
+  clip-path: var(--junto-slash-sm);
+}
+
+body.junto-theme.dark {
+  --junto-volt: #63bdff;
+}
+
+@keyframes junto-spin-slow {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes junto-glitch-pulse {
+  0%,
+  90.5%,
+  100% {
+    clip-path: inset(0 0 100% 0);
+    transform: none;
+    opacity: 0;
+  }
+  91% {
+    clip-path: inset(8% 0 64% 0);
+    transform: translate(-0.045em, 0.012em);
+    opacity: 0.9;
+  }
+  92.5% {
+    clip-path: inset(58% 0 12% 0);
+    transform: translate(0.05em, -0.01em);
+    opacity: 0.75;
+  }
+  94% {
+    clip-path: inset(30% 0 42% 0);
+    transform: translate(-0.028em, 0);
+    opacity: 0.85;
+  }
+  95.5% {
+    clip-path: inset(72% 0 4% 0);
+    transform: translate(0.036em, 0.014em);
+    opacity: 0.6;
+  }
+  97% {
+    clip-path: inset(0 0 100% 0);
+    transform: none;
+    opacity: 0;
+  }
+}
+@keyframes junto-glitch-fill {
+  0%,
+  90.5%,
+  100% {
+    transform: translateX(calc(var(--sv, 0) * -0.16px));
+  }
+  91% {
+    transform: translateX(calc(var(--sv, 0) * -0.16px + 0.02em)) translateY(-0.008em);
+  }
+  93% {
+    transform: translateX(calc(var(--sv, 0) * -0.16px - 0.024em)) translateY(0.01em);
+  }
+  95% {
+    transform: translateX(calc(var(--sv, 0) * -0.16px));
+  }
+}
+@keyframes junto-glitch-skew {
+  0%,
+  90.5%,
+  100% {
+    transform: none;
+  }
+  91.5% {
+    transform: skewX(-4deg) translateX(0.01em);
+  }
+  93.5% {
+    transform: skewX(3deg);
+  }
+  95% {
+    transform: none;
+  }
+}
+@keyframes junto-micro-glitch {
+  0% {
+    text-shadow: none;
+  }
+  33% {
+    text-shadow: -3px 0 var(--junto-volt), 3px 0 rgba(223, 242, 255, 0.65);
+  }
+  66% {
+    text-shadow: 2px 0 var(--junto-volt), -2px 0 rgba(223, 242, 255, 0.45);
+  }
+  100% {
+    text-shadow: none;
+  }
+}
+@keyframes junto-ransom-in {
+  from {
+    opacity: 0;
+    transform: rotate(calc(var(--rr, 0deg) * 3)) translateY(0.35em) scale(1.4);
+  }
+}
+@keyframes junto-wipe-zig {
+  0% {
+    clip-path: polygon(
+      0 0,
+      0 0,
+      0 8%,
+      0 16%,
+      0 24%,
+      0 32%,
+      0 40%,
+      0 48%,
+      0 56%,
+      0 64%,
+      0 72%,
+      0 80%,
+      0 88%,
+      0 96%,
+      0 100%,
+      0 100%
+    );
+  }
+  40%,
+  60% {
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      93% 8%,
+      100% 16%,
+      93% 24%,
+      100% 32%,
+      93% 40%,
+      100% 48%,
+      93% 56%,
+      100% 64%,
+      93% 72%,
+      100% 80%,
+      93% 88%,
+      100% 96%,
+      93% 100%,
+      0 100%
+    );
+  }
+  100% {
+    clip-path: polygon(
+      100% 0,
+      100% 0,
+      100% 8%,
+      100% 16%,
+      100% 24%,
+      100% 32%,
+      100% 40%,
+      100% 48%,
+      100% 56%,
+      100% 64%,
+      100% 72%,
+      100% 80%,
+      100% 88%,
+      100% 96%,
+      100% 100%,
+      100% 100%
+    );
+  }
+}
+@keyframes junto-error-glitch {
+  0%,
+  100% {
+    clip-path: inset(0 0 100% 0);
+    transform: none;
+    opacity: 0;
+  }
+  8% {
+    clip-path: inset(12% 0 55% 0);
+    transform: translate(-0.04em, 0.01em);
+    opacity: 0.9;
+  }
+  11% {
+    clip-path: inset(0 0 100% 0);
+    transform: none;
+    opacity: 0;
+  }
+  32% {
+    clip-path: inset(60% 0 10% 0);
+    transform: translate(0.05em, -0.012em);
+    opacity: 0.8;
+  }
+  35% {
+    clip-path: inset(35% 0 40% 0);
+    transform: translate(-0.03em, 0);
+    opacity: 0.7;
+  }
+  38% {
+    clip-path: inset(0 0 100% 0);
+    transform: none;
+    opacity: 0;
+  }
+  76% {
+    clip-path: inset(70% 0 5% 0);
+    transform: translate(0.035em, 0.012em);
+    opacity: 0.85;
+  }
+  79% {
+    clip-path: inset(0 0 100% 0);
+    transform: none;
+    opacity: 0;
+  }
+}
+@keyframes junto-error-fill {
+  0%,
+  100% {
+    transform: translateX(1vw);
+  }
+  8% {
+    transform: translateX(calc(1vw + 0.02em)) skewX(-3deg);
+  }
+  11% {
+    transform: translateX(1vw);
+  }
+  34% {
+    transform: translateX(calc(1vw - 0.025em)) skewX(2deg);
+  }
+  37% {
+    transform: translateX(1vw);
   }
 }
 
