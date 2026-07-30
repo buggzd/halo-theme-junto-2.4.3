@@ -405,16 +405,16 @@ const setupProjects = () => {
           const name = document.createElement("h3");
           name.textContent = String(repo.name).replaceAll("-", " ");
           const description = document.createElement("p");
-          description.textContent = repo.description || "Open-source experiment from the Junto archive.";
+          description.textContent = repo.description || "Built in public, refined in motion.";
           const meta = document.createElement("small");
           meta.textContent = `${repo.language || "MIXED"} / ★ ${repo.stargazers_count || 0} / GITHUB ↗`;
           link.append(number, name, description, meta);
           table.append(link);
         });
-      if (status) status.textContent = `LIVE DATA / github.com/${username}`;
+      if (status) status.textContent = `OPEN SOURCE / ${username}`;
     })
     .catch(() => {
-      if (status) status.textContent = "GITHUB SIGNAL UNAVAILABLE / TRY AGAIN LATER";
+      if (status) status.textContent = "MORE IN THE MAKING.";
     });
 };
 
