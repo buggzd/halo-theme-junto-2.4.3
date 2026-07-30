@@ -99,26 +99,24 @@
         th:with="pixivEnabled=${theme.config.photos.artwork_source == 'pixiv' and not #strings.isEmpty(theme.config.photos.pixiv_feed_url)}"
       >
         <div
-          class="junto-free-wall junto-pixiv-home"
-          data-junto-drag-board
+          class="junto-home-work-board junto-pixiv-home"
           data-junto-pixiv-home
           th:if="${pixivEnabled}"
           th:attr="data-junto-pixiv-feed=${theme.config.photos.pixiv_feed_url},data-junto-pixiv-profile=${theme.config.junto.pixiv_url}"
         >
-          <div class="junto-free-wall-canvas" data-junto-drag-canvas data-junto-pixiv-home-grid></div>
+          <div class="junto-home-work-grid" data-junto-pixiv-home-grid></div>
           <div class="junto-pixiv-home-status" data-junto-pixiv-status role="status">
             <span>正在接收来自 Pixiv 的最新画面…</span>
             <a th:href="${theme.config.junto.pixiv_url}" target="_blank" rel="noreferrer">VIEW PIXIV ↗</a>
           </div>
         </div>
         <div
-          class="junto-free-wall"
-          data-junto-drag-board
+          class="junto-home-work-board"
           th:if="${pluginFinder.available('PluginPhotos') and not #lists.isEmpty(photoFinder.listAll())}"
           th:hidden="${pixivEnabled}"
           th:attr="data-junto-halo-home-fallback=${pixivEnabled and theme.config.photos.pixiv_halo_fallback ? 'true' : null}"
         >
-          <div class="junto-free-wall-canvas fancybox-content" data-junto-drag-canvas>
+          <div class="junto-home-work-grid fancybox-content">
             <a
               class="junto-home-work"
               th:each="photo, stat : ${photoFinder.listAll()}"

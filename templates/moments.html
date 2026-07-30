@@ -9,7 +9,7 @@
 
   <th:block th:fragment="header">
     <th:block
-      th:replace="~{macro/page-header :: page-header(extension=${moments}, frontCover=${theme.config.patternimg.journals_patternimg}, headerTitle = ~{::headerTitle}, id='moments', isRandomImage=true)}"
+      th:replace="~{macro/page-header :: page-header(extension=${moments}, frontCover=${theme.config.patternimg.journals_patternimg}, headerTitle=~{::headerTitle}, id='notes', isRandomImage=true, pageSummary=${theme.config.journal.notes_hero_description ?: '把没有标题的一天留住：一句话、一张照片、一阵短暂却真实的心绪。'}, pageMetaPrimary='TORN PAPER', pageMetaSecondary='DRAGGABLE WALL', pageMetaTertiary='FIELD NOTES')}"
     />
   </th:block>
 
@@ -18,32 +18,103 @@
   </th:block>
 
   <th:block th:fragment="content">
-    <div class="moments-container junto-moments junto-shell">
-      <div class="junto-section-heading">
-        <div>
-          <span class="junto-eyebrow">MOMENTS / SHORT SIGNALS</span>
-          <h2>Now &<br />Then.</h2>
+    <div class="moments-container junto-moments">
+      <nav class="junto-notes-filter" aria-label="笔记筛选">
+        <div class="junto-shell junto-notes-filter-inner" data-junto-moment-filter>
+          <div>
+            <button class="active" type="button" data-junto-moment-filter-value="ALL">ALL</button>
+            <button type="button" data-junto-moment-filter-value="TEXT">TEXT</button>
+            <button type="button" data-junto-moment-filter-value="MEDIA">MEDIA</button>
+          </div>
+          <span th:text="|${moments.total} SCRAPS / NOTES|">0 SCRAPS / NOTES</span>
         </div>
-        <p>照片、短句和即时想法。保留 Halo 瞬间插件的点赞、媒体和评论能力。</p>
-      </div>
-      <ul th:if="${moments.total gt 0}" class="moments-inner">
-        <li class="moments-item journal" th:each="moment : ${moments.items}" th:data-name="${moment.metadata.name}">
-          <th:block th:insert="~{moment :: content(${moment})}" />
-        </li>
-      </ul>
-      <th:block th:if="${moments.totalPages gt 1}">
-        <div th:if="${moments.hasNext}" id="moment-list-pagination" class="pagination">
-          <a
-            th:href="@{${moments.nextUrl}}"
-            class="at_button"
-            data-i18n="page.moments.loadmore"
-            aria-label="get the next moment"
-          ></a>
+      </nav>
+
+      <section class="junto-notes-wall-shell">
+        <div class="junto-notes-wall-intro junto-shell junto-reveal">
+          <div>
+            <span class="junto-eyebrow">FIELD LOG / PINNED &amp; TORN</span>
+            <h2>Pinned &amp;<br />Torn.</h2>
+          </div>
+          <p
+            th:text="${theme.config.journal.notes_wall_description ?: '风从日常的缝隙里带回几句话，纸片记住当时的光线、情绪，以及没来得及说完的半句。'}"
+          >
+            风从日常的缝隙里带回几句话，纸片记住当时的光线、情绪，以及没来得及说完的半句。
+          </p>
         </div>
-      </th:block>
-      <th:block th:unless="${moments.total gt 0}">
-        <span data-i18n="page.moments.empty"></span>
-      </th:block>
+
+        <div class="junto-notes-wall junto-free-wall" data-junto-drag-board data-junto-drag-align-y="start">
+          <div
+            th:if="${moments.total gt 0}"
+            class="junto-notes-wall-canvas junto-free-wall-canvas"
+            data-junto-drag-canvas
+            data-junto-moment-canvas
+          >
+            <span class="junto-notes-wall-word" aria-hidden="true">NOTES</span>
+            <ul class="moments-inner" data-junto-moment-list>
+              <li
+                class="moments-item journal"
+                th:each="moment, momentStat : ${moments.items}"
+                th:data-name="${moment.metadata.name}"
+                th:attr="data-junto-note-kind=${#lists.isEmpty(moment.spec.content.medium) ? 'TEXT' : 'MEDIA'}"
+              >
+                <article class="junto-note-paper">
+                  <th:block th:insert="~{moment :: content(${moment})}" />
+                  <span class="junto-note-number" data-junto-note-number>NOTE / 01</span>
+                </article>
+              </li>
+            </ul>
+            <span class="junto-notes-wall-stamp" aria-hidden="true"
+              >FIELD NOTES<br />PINNED SINCE<br /><b th:text="${#dates.year(#dates.createNow())}">2026</b></span
+            >
+          </div>
+          <div class="junto-notes-empty" th:unless="${moments.total gt 0}">
+            <span data-i18n="page.moments.empty">还没有散落在这里的纸片。</span>
+          </div>
+        </div>
+
+        <th:block th:if="${moments.totalPages gt 1}">
+          <div th:if="${moments.hasNext}" id="moment-list-pagination" class="pagination junto-notes-pagination">
+            <a
+              th:href="@{${moments.nextUrl}}"
+              class="at_button"
+              data-i18n="page.moments.loadmore"
+              aria-label="get the next moment"
+            ></a>
+          </div>
+        </th:block>
+      </section>
+
+      <section class="junto-notes-index-shell junto-shell" th:if="${moments.total gt 0}">
+        <div class="junto-notes-index-head junto-reveal">
+          <div>
+            <span class="junto-eyebrow">FULL INDEX / ALL FIELD NOTES</span>
+            <h2>Every<br />Scrap.</h2>
+          </div>
+          <p
+            th:text="${theme.config.journal.notes_index_description ?: '日期替散落的片刻留下折痕；它们偶尔重叠，偶尔相隔很远，却都来自真实发生过的一天。'}"
+          >
+            日期替散落的片刻留下折痕；它们偶尔重叠，偶尔相隔很远，却都来自真实发生过的一天。
+          </p>
+        </div>
+        <div class="junto-notes-index" data-junto-moment-index>
+          <article
+            class="junto-notes-index-row"
+            th:each="moment, momentStat : ${moments.items}"
+            th:attr="data-junto-note-kind=${#lists.isEmpty(moment.spec.content.medium) ? 'TEXT' : 'MEDIA'}"
+          >
+            <span data-junto-index-number th:text="|NT-${momentStat.index lt 9 ? '0' : ''}${momentStat.index + 1}|"
+              >NT-01</span
+            >
+            <div class="junto-notes-index-copy" th:utext="${moment.spec.content.html}"></div>
+            <small>
+              <b th:text="${#lists.isEmpty(moment.spec.content.medium) ? 'TEXT NOTE' : 'MEDIA NOTE'}">TEXT NOTE</b
+              ><br />
+              <time th:text="${#dates.format(moment.spec.releaseTime, 'yyyy.MM.dd')}">2026.07.30</time>
+            </small>
+          </article>
+        </div>
+      </section>
     </div>
   </th:block>
 </html>

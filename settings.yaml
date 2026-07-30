@@ -544,6 +544,18 @@ spec:
     - group: journal
       label: 瞬间
       formSchema:
+        - $formkit: textarea
+          name: notes_hero_description
+          label: Notes 页头介绍
+          value: 把没有标题的一天留住：一句话、一张照片、一阵短暂却真实的心绪。
+        - $formkit: textarea
+          name: notes_wall_description
+          label: Notes 拼贴墙介绍
+          value: 风从日常的缝隙里带回几句话，纸片记住当时的光线、情绪，以及没来得及说完的半句。
+        - $formkit: textarea
+          name: notes_index_description
+          label: Notes 索引介绍
+          value: 日期替散落的片刻留下折痕；它们偶尔重叠，偶尔相隔很远，却都来自真实发生过的一天。
         - $formkit: checkbox
           name: journal_likes
           label: 点赞功能

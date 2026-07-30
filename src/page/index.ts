@@ -215,6 +215,9 @@ export default class Index {
     link.title = work.title;
     const visual = document.createElement("div");
     visual.className = "junto-home-work-visual";
+    if (work.width && work.height) {
+      visual.style.setProperty("--junto-work-ratio", `${work.width} / ${work.height}`);
+    }
     visual.append(buildPixivImage(work));
     const caption = document.createElement("span");
     const title = document.createElement("strong");

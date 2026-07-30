@@ -15,11 +15,13 @@
     </div>
     <div class="junto-page-summary">
       <p
-        th:text="${#strings.isEmpty(site.subtitle) ? '作品、项目、文章与视觉实验组成的个人数字档案。' : site.subtitle}"
+        th:text="${not #strings.isEmpty(pageSummary) ? pageSummary : (#strings.isEmpty(site.subtitle) ? '作品、项目、文章与视觉实验组成的个人数字档案。' : site.subtitle)}"
       ></p>
       <div class="junto-page-meta">
-        <span>HALO 2.x</span><span>DEEP BLUE</span
-        ><span th:text="${#strings.toUpperCase(id != null ? id : (_templateId != null ? _templateId : 'archive'))}"
+        <span th:text="${not #strings.isEmpty(pageMetaPrimary) ? pageMetaPrimary : 'HALO 2.x'}">HALO 2.x</span
+        ><span th:text="${not #strings.isEmpty(pageMetaSecondary) ? pageMetaSecondary : 'DEEP BLUE'}">DEEP BLUE</span
+        ><span
+          th:text="${not #strings.isEmpty(pageMetaTertiary) ? pageMetaTertiary : #strings.toUpperCase(id != null ? id : (_templateId != null ? _templateId : 'archive'))}"
           >ARCHIVE</span
         >
       </div>

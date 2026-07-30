@@ -330,13 +330,18 @@ const setupMotionInteractions = () => {
       dragging = false,
       moved = false,
       animation = 0;
-    const clamp = () => {
+    const bounds = () => {
       const boardRect = board.getBoundingClientRect();
       const canvasRect = canvas.getBoundingClientRect();
-      const boundX = Math.max(80, (canvasRect.width - boardRect.width) / 2);
-      const boundY = Math.max(60, (canvasRect.height - boardRect.height) / 2);
-      x = Math.max(-boundX, Math.min(boundX, x));
-      y = Math.max(-boundY, Math.min(boundY, y));
+      return {
+        x: Math.max(80, (canvasRect.width - boardRect.width) / 2),
+        y: Math.max(60, (canvasRect.height - boardRect.height) / 2),
+      };
+    };
+    const clamp = () => {
+      const limit = bounds();
+      x = Math.max(-limit.x, Math.min(limit.x, x));
+      y = Math.max(-limit.y, Math.min(limit.y, y));
     };
     const paint = () => {
       canvas.style.setProperty("--junto-drag-x", `${x}px`);
@@ -407,7 +412,26 @@ const setupMotionInteractions = () => {
       },
       { passive: false }
     );
+    const alignCanvas = () => {
+      const limit = bounds();
+      if (board.dataset.juntoDragAlignX === "start") x = limit.x;
+      if (board.dataset.juntoDragAlignY === "start") y = limit.y;
+      clamp();
+      paint();
+    };
+    board.addEventListener("junto:drag-align", alignCanvas);
+    window.addEventListener(
+      "resize",
+      () => {
+        clamp();
+        paint();
+      },
+      { passive: true }
+    );
     paint();
+    if (board.dataset.juntoDragAlignX === "start" || board.dataset.juntoDragAlignY === "start") {
+      requestAnimationFrame(alignCanvas);
+    }
   });
 };
 
