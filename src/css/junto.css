@@ -1517,20 +1517,6 @@ body.junto-theme::before {
   border-color: transparent;
   background: rgba(255, 255, 255, 0.86);
 }
-.junto-theme.template-index .junto-cursor,
-.junto-theme.template-index .junto-cursor-dot {
-  mix-blend-mode: normal;
-}
-.junto-theme.template-index .junto-cursor {
-  border-color: var(--junto-ink);
-}
-.junto-theme.template-index .junto-cursor-dot {
-  background: var(--junto-ink);
-}
-.junto-theme.template-index.junto-cursor-hot .junto-cursor {
-  border-color: rgba(112, 189, 240, 0.7);
-  background: rgba(112, 189, 240, 0.18);
-}
 @media (pointer: fine) {
   .junto-theme[data-junto-cursor="true"],
   .junto-theme[data-junto-cursor="true"] a,
@@ -3162,7 +3148,7 @@ body.junto-theme.dark::before {
 /* ============================================================
    Phantom graphic layer — P5R language in ink / paper / ice /
    volt. Slashed panels, halftone, sticker tape, starburst
-   badges, glitch events and the fractal hero core.
+   badges, glitch events and graphic accents.
    ============================================================ */
 
 /* Real display type. Anton carries Latin; font-synthesis:none keeps
@@ -3195,6 +3181,50 @@ body.junto-theme.dark::before {
   font-weight: 700;
   font-synthesis: none;
   letter-spacing: -0.01em;
+}
+
+/* Anton has taller glyphs than the original display stack. Give multiline
+   headlines enough baseline distance while retaining the compressed editorial rhythm. */
+.junto-page-title h1 {
+  line-height: 0.84;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.junto-hero-heading {
+  line-height: 0.78;
+  letter-spacing: -0.03em;
+}
+.junto-section-heading h2,
+.junto-home-route-copy h2,
+.junto-home-works-head h2,
+.junto-home-project-copy h2,
+.junto-index-head h1,
+.junto-index-head h2,
+.junto-home-editorial .junto-index-head h2,
+.junto-gallery-intro h2,
+.junto-project-head h2,
+.junto-about-copy > h2,
+.junto-loader-copy,
+.junto-plugin-missing h2 {
+  line-height: 0.84;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.junto-home-route-orbit > a,
+.junto-home-project-list h3,
+.junto-editorial-note h3,
+.junto-project-preview h3,
+.junto-project-index h3,
+.junto-taxonomy-card h2,
+.junto-friend-card h2,
+.junto-article-title {
+  line-height: 0.88;
+  letter-spacing: -0.018em;
+}
+.junto-repo-row h3,
+.junto-post-row h2 {
+  line-height: 0.94;
+  letter-spacing: -0.012em;
 }
 
 /* Eyebrow brand tick */
@@ -3371,32 +3401,6 @@ body.junto-tearing .junto-moments .moment-medium img {
 .junto-loader-copy i:nth-child(7n) {
   --rr: 3deg;
   background: var(--junto-paper-2);
-}
-
-/* Fractal hero core — Julia set replaces the conic blob once live */
-.junto-fractal {
-  position: absolute;
-  left: 52%;
-  top: 49%;
-  width: min(72vw, 1060px);
-  aspect-ratio: 1 / 1.08;
-  transform: translate(-50%, -50%) rotate(-4deg);
-  mix-blend-mode: multiply;
-  opacity: 0;
-  transition: opacity 1.2s var(--junto-ease);
-  pointer-events: none;
-}
-.junto-home-hero::before {
-  transition: opacity 0.8s var(--junto-ease);
-}
-body.junto-fractal-on .junto-fractal {
-  opacity: 0.92;
-}
-body.junto-fractal-on .junto-home-hero::before {
-  opacity: 0;
-}
-.junto-theme.dark .junto-fractal {
-  mix-blend-mode: screen;
 }
 
 /* 404 — full glitch showpiece */
