@@ -21,6 +21,11 @@
     th:classappend="| template-${_templateId}|"
     th:attr="data-junto-intro=${theme.config.junto.intro_animation},data-junto-cursor=${theme.config.junto.custom_cursor}"
   >
+    <div class="junto-page-wipe" aria-hidden="true">
+      <span class="junto-page-wipe-code">JUNTO / TRANSIT</span>
+      <span class="junto-page-wipe-mark">J</span>
+    </div>
+
     <div class="pjax">
       <!--/* variables.html 根据配置设置 css 变量值，全局 css 通过变量值进行处理 */-->
       <th:block th:replace="~{module/variables/index}"></th:block>

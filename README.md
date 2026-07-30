@@ -27,7 +27,7 @@
 3. 启用主题后，进入“外观 → 主题 → Junto Blue Archive → 设置 → Junto 专属”。
 4. 首页首屏描边字、滚动文字、三个入口、作品、项目和文章区文案均可在这里修改；站点名称和副标题继续使用 Halo 的站点基本设置。
 
-从 2.4.3 升级时，即使尚未保存新增设置，新版本也会先使用安全的默认文案，不会出现空白区块。2.4.6 新增完整夜间配色，并将瞬间与友链重做为便签拼贴和航空明信片风格，同时修复导航悬停跳动与深色文字冲突。
+从 2.4.3 升级时，即使尚未保存新增设置，新版本也会先使用安全的默认文案，不会出现空白区块。2.4.7 完整隔离了 Sakura 导航的旧边框与悬停位移动画，恢复 PJAX 深蓝斜切页面过场，并将回到顶部控件重做为带滚动进度的 P5R 风格拉杆。主题兼容 Halo 2.20.14。
 
 ## 开发
 
@@ -46,7 +46,7 @@ pnpm dev
 
 <h1 align="center">Sakura<img src="https://media.giphy.com/media/mGcNjsfWAjY5AEZNw6/giphy.gif" width="50"></h1>
 <p align="center">
-  <a href="https://github.com/halo-dev/halo"><img alt="Halo version" src="https://img.shields.io/badge/halo-2.17.0%2B-brightgreen?style=for-the-badge" /></a>
+  <a href="https://github.com/halo-dev/halo"><img alt="Halo version" src="https://img.shields.io/badge/halo-2.19.0%2B-brightgreen?style=for-the-badge" /></a>
   <a href="https://github.com/LIlGG/halo-theme-sakura"><img alt="Build Status" src="https://img.shields.io/badge/build-positive-brightgreen?style=for-the-badge"></a>
   <a href="https://github.com/prettier/prettier"><img alt="Code Style: Prettier" src="https://img.shields.io/badge/release-2.0.0-blue?style=for-the-badge"></a>
   <a href="./LICENSE"><img alt="LICENSE MIT" src="https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge"></a>

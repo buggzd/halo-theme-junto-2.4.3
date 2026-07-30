@@ -13,11 +13,16 @@ const setupGlobalJunto = () => {
   window.addEventListener("scroll", updateHeader, { passive: true });
   const updateReadingProgress = () => {
     const progress = $("[data-junto-reading-progress]") as HTMLElement | null;
-    if (!progress) return;
     const max = document.documentElement.scrollHeight - innerHeight;
-    progress.style.width = `${max > 0 ? (scrollY / max) * 100 : 0}%`;
+    const ratio = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+    if (progress) progress.style.width = `${ratio * 100}%`;
+    document.documentElement.style.setProperty("--junto-scroll-progress", `${ratio * 100}%`);
+    const topPercent = $("[data-junto-top-percent]");
+    if (topPercent) topPercent.textContent = `${String(Math.round(ratio * 100)).padStart(2, "0")}%`;
   };
   window.addEventListener("scroll", updateReadingProgress, { passive: true });
+  window.addEventListener("resize", updateReadingProgress, { passive: true });
+  window.addEventListener("pjax:complete", updateReadingProgress);
   updateReadingProgress();
   window.addEventListener(
     "pointermove",
@@ -40,6 +45,44 @@ const setupGlobalJunto = () => {
       const menuButton = $("[data-junto-menu]");
       if (menuButton) menuButton.textContent = "INDEX +";
     }
+  });
+
+  const playPageWipe = () => {
+    const wipe = $(".junto-page-wipe") as HTMLElement | null;
+    if (!wipe || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    wipe.classList.remove("is-active");
+    void wipe.offsetWidth;
+    wipe.classList.add("is-active");
+    window.setTimeout(() => wipe.classList.remove("is-active"), 950);
+  };
+  window.addEventListener("pjax:send", playPageWipe);
+
+  document.addEventListener("click", (event) => {
+    if ($("#pjax") || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey)
+      return;
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const link = target.closest<HTMLAnchorElement>("a[href]");
+    if (
+      !link ||
+      link.target ||
+      link.hasAttribute("download") ||
+      link.origin !== location.origin ||
+      link.pathname === location.pathname
+    )
+      return;
+    event.preventDefault();
+    playPageWipe();
+    window.setTimeout(() => location.assign(link.href), 360);
+  });
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const control = target.closest(".junto-top-lever,.junto-top-mobile");
+    if (!control) return;
+    control.classList.add("is-pulling");
+    window.setTimeout(() => control.classList.remove("is-pulling"), 720);
   });
 
   if (
