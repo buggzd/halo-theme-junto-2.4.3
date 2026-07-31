@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html
   xmlns:th="https://www.thymeleaf.org"
-  th:replace="~{layout :: layout(_title = ~{::title}, _header = ~{::header}, _content = ~{::content}, _sidebar = ~{::sidebar})}"
+  th:replace="~{layout :: layout(_title = ~{::title}, _header = ~{::header}, _content = ~{::content})}"
 >
   <th:block th:fragment="title">
     <th:block th:text="${post.spec.title} + '|' + ${site.title}|"></th:block>
@@ -39,18 +39,46 @@
   </th:block>
 
   <th:block th:fragment="content">
-    <div id="primary" class="content-area junto-article-content">
-      <th:block th:replace="~{macro/content-post :: content-post(${post})}" />
-      <th:block th:replace="~{module/post-pagination :: post-nextprev(${post})}" />
-      <th:block th:replace="~{module/authorprofile :: authorprofile(${post})}" />
-    </div>
-    <!--/* 评论组件 */-->
-    <th:block
-      th:replace="~{module/comment :: comment(group = 'content.halo.run', kind = 'Post', name = ${post.metadata.name})}"
-    />
-  </th:block>
+    <div class="junto-article-layout">
+      <aside class="junto-article-tools" data-junto-reading-tools aria-label="阅读控制">
+        <span class="junto-eyebrow">READING / 阅读控制</span>
+        <div class="junto-article-tool-list">
+          <button type="button" class="junto-article-tool" data-junto-font-minus aria-label="缩小正文字号">
+            <b aria-hidden="true">A−</b><span>TEXT MINUS<small>缩小</small></span>
+          </button>
+          <button type="button" class="junto-article-tool" data-junto-font-plus aria-label="放大正文字号">
+            <b aria-hidden="true">A+</b><span>TEXT PLUS<small>放大</small></span>
+          </button>
+          <button
+            type="button"
+            class="junto-article-tool"
+            data-junto-focus
+            aria-label="切换专注阅读模式"
+            aria-pressed="false"
+          >
+            <b aria-hidden="true">◎</b><span>FOCUS<small>专注</small></span>
+          </button>
+          <button type="button" class="junto-article-tool" data-junto-copy-link aria-label="复制文章链接">
+            <b aria-hidden="true">↗</b><span data-junto-copy-label>COPY LINK<small>复制链接</small></span>
+          </button>
+        </div>
+        <output class="junto-article-size" data-junto-font-status aria-live="polite">TEXT / 18PX</output>
+      </aside>
 
-  <th:block th:fragment="sidebar">
-    <th:block th:replace="~{macro/sidebar :: sidebar(${#annotations.getOrDefault(post, 'toc', true)})}" />
+      <div class="junto-article-main">
+        <div id="primary" class="content-area junto-article-content">
+          <th:block th:replace="~{macro/content-post :: content-post(${post})}" />
+          <th:block th:replace="~{module/post-pagination :: post-nextprev(${post})}" />
+          <th:block th:replace="~{module/authorprofile :: authorprofile(${post})}" />
+        </div>
+        <!--/* 评论组件 */-->
+        <th:block
+          th:replace="~{module/comment :: comment(group = 'content.halo.run', kind = 'Post', name = ${post.metadata.name})}"
+        />
+      </div>
+
+      <th:block th:replace="~{macro/sidebar :: sidebar(${#annotations.getOrDefault(post, 'toc', true)})}" />
+    </div>
+    <button type="button" class="junto-focus-exit" data-junto-focus-exit>EXIT FOCUS / 退出专注 · ESC</button>
   </th:block>
 </html>

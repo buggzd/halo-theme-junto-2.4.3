@@ -1,12 +1,11 @@
 <th:block th:fragment="sidebar(isToc)">
-  <aside class="sidebar">
+  <aside class="sidebar junto-article-toc" th:if="${isToc}" aria-label="文章目录">
     <div class="sidebar-inner">
-      <th:block th:if="${isToc}">
-        <div class="toc-container">
-          <!--/* 由 js 填充 */-->
-          <div class="toc"></div>
-        </div>
-      </th:block>
+      <div class="toc-container">
+        <span class="junto-eyebrow">ON THIS PAGE / 文章目录</span>
+        <!--/* 由 tocbot 填充 */-->
+        <div class="toc"></div>
+      </div>
     </div>
   </aside>
 </th:block>

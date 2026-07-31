@@ -3,6 +3,8 @@ import { I18nFormat } from "../utils/i18nFormat";
 import { Util } from "../utils/util";
 
 export default class Post {
+  private readingToolsAbortController?: AbortController;
+
   /**
    * 为 mark（高亮）标签内的直接文本块添加 span 标签。
    *
@@ -117,6 +119,149 @@ export default class Post {
         event.clipboardData.setData("text/plain", textStr);
       }
     });
+  }
+
+  /**
+   * 注册文章字号、专注模式与链接复制控制。
+   *
+   * PJAX 刷新时先中止上一组监听，避免 window 上的快捷键重复触发。
+   */
+  @documentFunction()
+  public registerReadingTools() {
+    this.readingToolsAbortController?.abort();
+    document.body.classList.remove("junto-focus-mode");
+
+    const tools = document.querySelector<HTMLElement>("[data-junto-reading-tools]");
+    const article = document.querySelector<HTMLElement>(".junto-article-main .entry-content");
+    if (!tools || !article) {
+      return;
+    }
+
+    const controller = new AbortController();
+    const { signal } = controller;
+    this.readingToolsAbortController = controller;
+
+    const fontMinus = tools.querySelector<HTMLButtonElement>("[data-junto-font-minus]");
+    const fontPlus = tools.querySelector<HTMLButtonElement>("[data-junto-font-plus]");
+    const fontStatus = tools.querySelector<HTMLOutputElement>("[data-junto-font-status]");
+    const focusButton = tools.querySelector<HTMLButtonElement>("[data-junto-focus]");
+    const focusExit = document.querySelector<HTMLButtonElement>("[data-junto-focus-exit]");
+    const copyButton = tools.querySelector<HTMLButtonElement>("[data-junto-copy-link]");
+    const copyLabel = tools.querySelector<HTMLElement>("[data-junto-copy-label]");
+    const minFontSize = 15;
+    const maxFontSize = 23;
+    const defaultFontSize = 18;
+    const storageKey = "juntoArticleFontSize";
+    let copyResetTimer = 0;
+    let fontSize = defaultFontSize;
+
+    try {
+      fontSize = Number.parseInt(localStorage.getItem(storageKey) || "", 10) || defaultFontSize;
+    } catch {
+      fontSize = defaultFontSize;
+    }
+
+    const applyFontSize = (nextSize: number) => {
+      fontSize = Math.min(maxFontSize, Math.max(minFontSize, nextSize));
+      article.style.setProperty("--junto-article-size", `${fontSize}px`);
+      if (fontStatus) {
+        fontStatus.textContent = `TEXT / ${fontSize}PX`;
+      }
+      if (fontMinus) {
+        fontMinus.disabled = fontSize === minFontSize;
+      }
+      if (fontPlus) {
+        fontPlus.disabled = fontSize === maxFontSize;
+      }
+      try {
+        localStorage.setItem(storageKey, String(fontSize));
+      } catch {
+        // Storage can be unavailable in privacy modes; the control still works for the current page.
+      }
+    };
+
+    const setFocusMode = (active: boolean) => {
+      document.body.classList.toggle("junto-focus-mode", active);
+      focusButton?.classList.toggle("is-active", active);
+      focusButton?.setAttribute("aria-pressed", String(active));
+      focusButton?.setAttribute("aria-label", active ? "退出专注阅读模式" : "进入专注阅读模式");
+    };
+
+    const setCopyLabel = (english: string, chinese: string) => {
+      if (!copyLabel) {
+        return;
+      }
+      const small = document.createElement("small");
+      small.textContent = chinese;
+      copyLabel.replaceChildren(document.createTextNode(english), small);
+    };
+
+    const fallbackCopy = (text: string) => {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      const copied = document.execCommand("copy");
+      textarea.remove();
+      return copied;
+    };
+
+    applyFontSize(fontSize);
+    setFocusMode(false);
+
+    fontMinus?.addEventListener("click", () => applyFontSize(fontSize - 1), { signal });
+    fontPlus?.addEventListener("click", () => applyFontSize(fontSize + 1), { signal });
+    focusButton?.addEventListener("click", () => setFocusMode(!document.body.classList.contains("junto-focus-mode")), {
+      signal,
+    });
+    focusExit?.addEventListener("click", () => setFocusMode(false), { signal });
+    window.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "Escape" && document.body.classList.contains("junto-focus-mode")) {
+          setFocusMode(false);
+          focusButton?.focus();
+        }
+      },
+      { signal }
+    );
+    copyButton?.addEventListener(
+      "click",
+      async () => {
+        let copied = false;
+        try {
+          if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(window.location.href);
+            copied = true;
+          } else {
+            copied = fallbackCopy(window.location.href);
+          }
+        } catch {
+          copied = fallbackCopy(window.location.href);
+        }
+
+        copyButton.classList.toggle("is-success", copied);
+        setCopyLabel(copied ? "COPIED" : "COPY FAILED", copied ? "已复制" : "请手动复制");
+        window.clearTimeout(copyResetTimer);
+        copyResetTimer = window.setTimeout(() => {
+          copyButton.classList.remove("is-success");
+          setCopyLabel("COPY LINK", "复制链接");
+        }, 1800);
+      },
+      { signal }
+    );
+
+    signal.addEventListener(
+      "abort",
+      () => {
+        window.clearTimeout(copyResetTimer);
+        document.body.classList.remove("junto-focus-mode");
+      },
+      { once: true }
+    );
   }
 
   /**
