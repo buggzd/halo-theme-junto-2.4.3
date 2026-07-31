@@ -8,7 +8,9 @@
   </th:block>
 
   <th:block th:fragment="header">
-    <div class="junto-reading-progress" data-junto-reading-progress></div>
+    <div class="junto-reading-progress-track" aria-hidden="true">
+      <div class="junto-reading-progress" data-junto-reading-progress></div>
+    </div>
     <section class="junto-article-hero">
       <div class="junto-article-hero-inner junto-shell">
         <div><span class="junto-eyebrow">ARTICLE / FIELD NOTE</span><th:block th:replace="~{::headerTitle}" /></div>

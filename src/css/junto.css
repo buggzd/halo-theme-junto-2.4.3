@@ -58,6 +58,36 @@ body.junto-theme::before {
   color: white;
   background: var(--junto-ink);
 }
+html:has(body.junto-theme) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--junto-blue) var(--junto-paper-2);
+}
+html:has(body.junto-theme)::-webkit-scrollbar,
+body.junto-theme::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: var(--junto-paper-2);
+}
+html:has(body.junto-theme)::-webkit-scrollbar-track,
+body.junto-theme::-webkit-scrollbar-track {
+  background: var(--junto-paper-2);
+  border-left: 1px solid var(--junto-line);
+}
+html:has(body.junto-theme)::-webkit-scrollbar-thumb,
+body.junto-theme::-webkit-scrollbar-thumb {
+  min-height: 46px;
+  background: linear-gradient(180deg, #2e9bff 0%, #17639a 52%, #061a36 100%);
+  border: 1px solid var(--junto-paper-2);
+  border-radius: 0;
+}
+html:has(body.junto-theme)::-webkit-scrollbar-thumb:hover,
+body.junto-theme::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #70bdf0 0%, #2e9bff 48%, #17639a 100%);
+}
+html:has(body.junto-theme)::-webkit-scrollbar-corner,
+body.junto-theme::-webkit-scrollbar-corner {
+  background: var(--junto-paper-2);
+}
 .junto-shell {
   width: var(--junto-content);
   margin-inline: auto;
@@ -3258,14 +3288,90 @@ body.junto-theme::before {
   margin: 0;
   padding: 0;
 }
-.junto-reading-progress {
+.junto-theme.template-post {
+  /* Unlike hidden, clip does not create a scroll container that breaks sticky sidebars. */
+  overflow-x: visible;
+  overflow-x: clip;
+}
+.junto-reading-progress-track {
   position: fixed;
-  top: 66px;
+  top: 72px;
   left: 0;
   z-index: 1100;
+  width: 100%;
+  height: 7px;
+  overflow: visible;
+  pointer-events: none;
+  background: rgba(6, 26, 54, 0.13);
+  border-bottom: 1px solid rgba(6, 26, 54, 0.18);
+  box-shadow: 0 5px 18px rgba(6, 26, 54, 0.08);
+}
+.junto-reading-progress-track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent calc(8.333% - 1px),
+    rgba(6, 26, 54, 0.18) calc(8.333% - 1px),
+    rgba(6, 26, 54, 0.18) 8.333%
+  );
+}
+.junto-reading-progress {
+  position: relative;
+  z-index: 1;
   width: 0;
-  height: 3px;
-  background: var(--junto-blue);
+  height: 100%;
+  overflow: visible;
+  background: linear-gradient(90deg, #061a36 0%, #17639a 62%, #2e9bff 100%);
+  box-shadow: 0 0 16px rgba(46, 155, 255, 0.48);
+  transition: width 0.12s linear;
+}
+.junto-reading-progress::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    transparent 10px,
+    rgba(223, 242, 255, 0.28) 10px,
+    rgba(223, 242, 255, 0.28) 14px
+  );
+}
+.junto-reading-progress::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  right: -7px;
+  width: 15px;
+  height: 15px;
+  background: var(--junto-volt);
+  clip-path: polygon(0 0, 100% 50%, 0 100%, 26% 50%);
+  filter: drop-shadow(0 0 5px rgba(46, 155, 255, 0.75));
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.18s, transform 0.24s var(--junto-ease);
+}
+.junto-reading-progress.has-progress::after {
+  opacity: 1;
+  transform: none;
+}
+.junto-theme.dark .junto-reading-progress-track {
+  background: rgba(223, 242, 255, 0.12);
+  border-bottom-color: rgba(223, 242, 255, 0.2);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.32);
+}
+.junto-theme.dark .junto-reading-progress-track::after {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent calc(8.333% - 1px),
+    rgba(223, 242, 255, 0.22) calc(8.333% - 1px),
+    rgba(223, 242, 255, 0.22) 8.333%
+  );
 }
 .junto-article-hero {
   position: relative;
@@ -5200,7 +5306,7 @@ body.junto-theme.dark {
   .junto-post-date {
     display: none;
   }
-  .junto-reading-progress {
+  .junto-reading-progress-track {
     top: 58px;
   }
   .junto-article-hero {

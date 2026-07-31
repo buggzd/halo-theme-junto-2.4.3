@@ -88,7 +88,10 @@ const setupGlobalJunto = () => {
     const progress = $("[data-junto-reading-progress]") as HTMLElement | null;
     const max = document.documentElement.scrollHeight - innerHeight;
     const ratio = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
-    if (progress) progress.style.width = `${ratio * 100}%`;
+    if (progress) {
+      progress.style.width = `${ratio * 100}%`;
+      progress.classList.toggle("has-progress", ratio > 0.001);
+    }
     document.documentElement.style.setProperty("--junto-scroll-progress", `${ratio * 100}%`);
     const topPercent = $("[data-junto-top-percent]");
     if (topPercent) topPercent.textContent = `${String(Math.round(ratio * 100)).padStart(2, "0")}%`;
